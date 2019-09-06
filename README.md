@@ -1,4 +1,7 @@
 ## Prerequisites
+- Python 3
+- MySQL Database
+
 Setup a MySQL database, if you have Docker, run the following command to create the database container
 ```shell
 docker run --name mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=cms -p 3306:3306 -d mysql:5
@@ -13,7 +16,17 @@ DATABASE_URI=mysql+pymysql://root:password@localhost:3306/cms
 To get started, duplicate the `example.env` and rename the duplicated file to `.env`. Update the configuration
 in the new `.env` file accordingly.
 
-First run 
+Run this command to create the virtual env folder
+```shell
+python3 -3 -m venv venv
+```
+
+Then activate the environment
+```shell
+. venv/bin/activate
+```
+
+Install the required packages
 ```shell
 pip install -r requirements.txt
 ```
