@@ -2,7 +2,6 @@ import json
 import unittest
 
 from flask.testing import FlaskClient
-from flask_jwt_extended import JWTManager
 from flask_migrate import upgrade
 
 from webapp import create_app, db  # noqa: E402
@@ -27,7 +26,6 @@ class UserModuleTests(unittest.TestCase):
         )
         self.app = create_app("config.TestConfig")
 
-        JWTManager(self.app)
         self.client: FlaskClient = self.app.test_client()
         self.app_context = self.app.app_context()
 
@@ -119,26 +117,6 @@ class UserModuleTests(unittest.TestCase):
                 "/api/users", data=json.dumps({}), content_type="application/json"
             )
             assert request.status_code == 400
-
-    def test_user_login(self):
-        with self.client as c:
-            request = c.get("/api/auth/login")
-            assert request.status_code == 401
-
-            request = c.post(
-                "/api/auth/login",
-                data=json.dumps({"username": "test", "password": "1234567"}),
-                content_type="application/json",
-            )
-            data = json.loads(request.get_data(as_text=True))
-            assert request.status_code == 200
-            assert "access_token" in data
-
-            request = c.get(
-                "/api/auth/login",
-                headers={"Authorization": "Bearer {}".format(data["access_token"])},
-            )
-            assert request.status_code == 200
 
 
 if __name__ == "__main__":

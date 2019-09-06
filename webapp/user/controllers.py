@@ -2,7 +2,6 @@ import logging
 
 from flasgger import SwaggerView, Schema, fields
 from flask import request, current_app
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from flask_restplus import abort
 from marshmallow import validate
 
@@ -32,52 +31,6 @@ class UpdateUserSchema(Schema):
     username = fields.Str(required=True)
     password = fields.Str(required=True, validate=validate.Length(min=6))
     email = fields.Email(required=True)
-
-
-class LoginSchema(Schema):
-    username = fields.Str(required=True)
-    password = fields.Str(required=True, validate=validate.Length(min=6))
-
-
-class JWTTokenSchema(Schema):
-    access_token = fields.Str()
-
-
-class UserLoginApi(SwaggerView):
-    tags = ["Users"]
-    definitions = {"LoginSchema": LoginSchema, "JWTTokenSchema": JWTTokenSchema}
-
-    def __init__(self, *args, **kwargs):
-        self.logger: logging.Logger = current_app.logger
-        self.user_service = UserService()
-
-    def post(self):
-        """
-        Login
-        ---
-        responses:
-          200:
-            description: Authentication Token
-            content:
-              application/json:
-                schema:
-                    $ref: '#/definitions/JWTTokenSchema'
-        """
-        login_schema: Schema = LoginSchema()
-        result = login_schema.load(request.get_json())
-        user_id = 1
-        if result.errors:
-            abort(400, str(result.errors))
-        return (
-            JWTTokenSchema()
-            .dump({"access_token": create_access_token(identity=user_id)})
-            .data
-        )
-
-    @jwt_required
-    def get(self):
-        identity = get_jwt_identity()
-        return identity
 
 
 class UserListApi(SwaggerView):

@@ -10,7 +10,6 @@ env = os.environ.get("FLASK_ENV", "development")
 app = create_app("config.%sConfig" % env.capitalize())
 
 swagger = Swagger(app)
-jwt = JWTManager(app)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 if __name__ == "__main__":
