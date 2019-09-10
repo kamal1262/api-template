@@ -2,7 +2,6 @@ import os
 
 from flasgger import Swagger
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager
 
 from webapp import create_app
 

@@ -18,8 +18,10 @@ class Config(object):
         "specs": [{"endpoint": "apispec", "route": "/apispec.json"}],
     }
     XRAY = {
-        "enabled": (os.environ.get("XRAY_ENABLED", 'False') or 'False').lower() == 'true',
-        "daemon_url": os.environ.get("XRAY_DAEMON_URL", default="127.0.0.1:2000") or '127.0.0.1:2000',
+        "enabled": (os.environ.get("XRAY_ENABLED", "False") or "False").lower()
+        == "true",
+        "daemon_url": os.environ.get("XRAY_DAEMON_URL", default="127.0.0.1:2000")
+        or "127.0.0.1:2000",
         "inspect_sql_query": os.environ.get("XRAY_INSPECT_QUERY", "False"),
     }
     JWT_ACCESS_TOKEN_EXPIRES = False
