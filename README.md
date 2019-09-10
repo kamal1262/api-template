@@ -22,22 +22,27 @@ python3 -3 -m venv venv
 ```
 
 Then activate the environment
-```shell
+```bash
 . venv/bin/activate
 ```
 
 Install the required packages
-```shell
+```bash
 pip install -r requirements.txt
 ```
 
+Install pre-commit hook
+```bash
+pre-commit install
+```
+
 Then run the migration process to create the database structure needed by the application
-```shell
+```bash
 flask db upgrade
 ```
 
 Run the application when the migration completed.
-```shell
+```bash
 flask run
 ```
 
