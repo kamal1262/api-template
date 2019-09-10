@@ -2,15 +2,6 @@
 - Python 3
 - MySQL Database
 
-Setup a MySQL database, if you have Docker, run the following command to create the database container
-```shell
-docker run --name mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=cms -p 3306:3306 -d mysql:5
-```
-
-Then in your configuration, update the `DATABASE_URI` value to
-```..env
-DATABASE_URI=mysql+pymysql://root:password@localhost:3306/cms
-```
 
 ## Getting started
 To get started, duplicate the `example.env` and rename the duplicated file to `.env`. Update the configuration
@@ -18,7 +9,7 @@ in the new `.env` file accordingly.
 
 Run this command to create the virtual env folder
 ```shell
-python3 -3 -m venv venv
+python3 -m venv venv
 ```
 
 Then activate the environment
@@ -34,6 +25,21 @@ pip install -r requirements.txt
 Install pre-commit hook
 ```bash
 pre-commit install
+```
+
+Create `.env` file from `example.env`
+```bash
+cp example.env .env
+```
+
+Setup a MySQL database, if you have Docker, run the following command to create the database container
+```shell
+docker run --name mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=cms -p 3306:3306 -d mysql:5
+```
+
+Then in `.env`, update the `DATABASE_URI` value to
+```..env
+DATABASE_URI=mysql+pymysql://root:password@localhost:3306/cms
 ```
 
 Then run the migration process to create the database structure needed by the application
