@@ -169,6 +169,10 @@ is committing codes using Git commit, it will trigger the commit hook and format
 At the moment we are using [Black](https://github.com/psf/black) and
 [Flake8](http://flake8.pycqa.org/en/latest/) to format the code and check the style.
 
+> Tips: you can run the pre-commit manually with the following command 
+  ```
+  pre-commit run  --all-files
+  ```
 
 ## Testing
 ### Pre-requisites
@@ -190,3 +194,5 @@ run the migration script and create the necessary tables. We can also populate s
 
 
 ### TODO
+- Found some issues with AWS-Xray SDK library, trace data will not be streamed back to X-ray when SQL inspection is turned
+on and exception happened during the API call, need some time to look into it.
