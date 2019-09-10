@@ -1,3 +1,14 @@
+# When you clone this project
+1. Create your own repository in GitHub
+2. Clone this project
+3. Go into into the folder
+4. Remove the original `.git folder`
+5. Run `git init`
+6. Configure to point to your own repo `git remote add origin git@git.realestate.com.au:organization/your-own-repo.git`
+7. And then add all files into Git `git add .`
+8. Do an initial commit. `git commit -m "initial commit" .`
+9. Push to your own repository `git push -u origin master`
+
 ## Prerequisites
 - Python 3
 - MySQL Database
