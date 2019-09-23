@@ -1,10 +1,16 @@
 FROM python:3.7-alpine
 
-COPY . /app
+COPY requirements.txt /
+
+RUN pip install -r requirements.txt
+
+RUN apk update && \
+    apk upgrade && \
+    apk add curl vim
 
 WORKDIR /app
 
-RUN pip install -r requirements.txt
+COPY . /app
 
 RUN pip install gunicorn
 
