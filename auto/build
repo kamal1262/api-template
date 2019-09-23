@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+set -euxo pipefail
+
+cd "$(dirname $0)/.."
+
+export REGION=ap-southeast-1
+export IMAGE_NAME=api-template:"${BUILDKITE_BUILD_NUMBER:-latest}"
+export DOCKERFILE_PATH="Dockerfile"
+
+function exists()
+{
+  command -v "$1" >/dev/null 2>&1
+}
+
+function authenticate_to_ecr {
+
+    AWS_ACCOUNT_ID="${1}"
+    REGION="${2}"
+
+    if exists docker ; then
+        echo "docker found in PATH."
+    else
+        echo "docker NOT found in PATH, Exiting!!!"
+        exit 1
+    fi
+    echo "Authenticating to ECR"
+    if [[ -n "${AWS_ACCESS_KEY_ID:-}" ]] && [[ -n "${AWS_SECRET_ACCESS_KEY:-}" ]] && [[ -n "${AWS_SESSION_TOKEN:-}" ]]; then 
+        eval $(docker run --network=host -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN --rm xueshanf/awscli aws ecr get-login --no-include-email --registry-ids $AWS_ACCOUNT_ID --region $REGION)
+    else
+        eval $(docker run --network=host --rm xueshanf/awscli aws ecr get-login --no-include-email --registry-ids $AWS_ACCOUNT_ID --region $REGION)
+    fi
+}
+
+if [[ -n "${ENVIRONMENT:-}" ]]; then
+    echo "Environment is ${ENVIRONMENT}"
+    if [[ "${ENVIRONMENT}" = "DEV" ]]; then
+
+        export AWS_PROJECT_ID="793999821937"
+        echo "AWS Project ID => ${AWS_PROJECT_ID}"
+
+    elif [[ "${ENVIRONMENT}" = "STAGING" ]]; then
+
+        export AWS_PROJECT_ID="958356994665"
+        echo "AWS Project ID => ${AWS_PROJECT_ID}"
+
+    elif [[ "${ENVIRONMENT}" = "PROD" ]]; then
+
+        export AWS_PROJECT_ID="961063351939"
+        echo "AWS Project ID => ${AWS_PROJECT_ID}"
+
+    else
+        echo "Unsupported ENVIRONMENT Value, Exiting!!!"
+        exit 1
+    fi
+    export IMAGE_URL="${AWS_PROJECT_ID}".dkr.ecr."${REGION}".amazonaws.com/"${IMAGE_NAME}"
+    authenticate_to_ecr "${AWS_PROJECT_ID}" "${REGION}"
+else
+    echo "Value of ENVIRONMENT can't be null, Exiting!!!"
+    exit 1
+fi
+
+echo "Building the docker image"
+
+docker build --network=host -t "${IMAGE_NAME}" -f "${DOCKERFILE_PATH}" .
+
+echo "Tagging the image"
+docker tag "${IMAGE_NAME}" "${IMAGE_URL}"
+
+echo "Pushing the image to Container Registry"
+docker push "${IMAGE_URL}"
