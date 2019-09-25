@@ -1,5 +1,108 @@
 #!/usr/bin/env bash
 
-set -euxo pipefail
+set -euox pipefail
 
-cd "$(dirname $0)/.."
+cd "$(dirname $0)/../infra"
+
+export DEPLOYER_VERSION=12
+export REGION=ap-southeast-1
+
+function authenticate_to_ecr {
+
+    AWS_ACCOUNT_ID="${1}"
+    REGION="${2}"
+
+    if exists docker ; then
+        echo "docker found in PATH."
+    else
+        echo "docker NOT found in PATH, Exiting!!!"
+        exit 1
+    fi
+    echo "Authenticating to ECR"
+    if [[ -n "${AWS_ACCESS_KEY_ID:-}" ]] && [[ -n "${AWS_SECRET_ACCESS_KEY:-}" ]] && [[ -n "${AWS_SESSION_TOKEN:-}" ]]; then 
+        eval $(docker run --network=host -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN --rm xueshanf/awscli aws ecr get-login --no-include-email --registry-ids $AWS_ACCOUNT_ID --region $REGION)
+    else
+        eval $(docker run --network=host --rm xueshanf/awscli aws ecr get-login --no-include-email --registry-ids $AWS_ACCOUNT_ID --region $REGION)
+    fi
+}
+
+
+if [[ -n "${ENVIRONMENT:-}" ]]; then
+    echo "Environment is ${ENVIRONMENT}"
+    if [[ "${ENVIRONMENT}" = "DEV" ]]; then
+
+        export AWS_PROJECT_ID="793999821937"
+        echo "AWS Project ID => ${AWS_PROJECT_ID}"
+        export SERVICE_CLUSTER="dev-service-cluster"
+        echo "AWS Project ID => ${AWS_PROJECT_ID}, Cluster => ${SERVICE_CLUSTER}"
+
+    elif [[ "${ENVIRONMENT}" = "STAGING" ]]; then
+
+        export AWS_PROJECT_ID="958356994665"
+        echo "AWS Project ID => ${AWS_PROJECT_ID}"
+        export SERVICE_CLUSTER="staging-service-cluster"
+        echo "AWS Project ID => ${AWS_PROJECT_ID}, Cluster => ${SERVICE_CLUSTER}"
+
+    elif [[ "${ENVIRONMENT}" = "PROD" ]]; then
+
+        export AWS_PROJECT_ID="961063351939"
+        echo "AWS Project ID => ${AWS_PROJECT_ID}"
+        export SERVICE_CLUSTER="prod-service-cluster"
+        echo "AWS Project ID => ${AWS_PROJECT_ID}, Cluster => ${SERVICE_CLUSTER}"
+
+    else
+        echo "Unsupported ENVIRONMENT Value, Exiting!!!"
+        exit 1
+    fi
+    authenticate_to_ecr "${AWS_PROJECT_ID}" "${REGION}"
+else
+    echo "ENVIRONMENT Value can't be null, Exiting!!!"
+    exit 1
+fi
+
+echo "Deploying helm chart"
+
+export AWS_DEPLOYER="${AWS_PROJECT_ID}".dkr.ecr."${REGION}".amazonaws.com/aws-deployer:"${DEPLOYER_VERSION}"
+export CHART_NAME="$(grep "name" Chart.yaml | cut -d" " -f2)"
+
+echo "Setting the Build Number"
+# Below command is for testing on MAC.
+sed -i "" 's/BUILDKITE_BUILD_NUMBER/'"$BUILDKITE_BUILD_NUMBER"'/g' Chart.yaml
+#sed -i 's/BUILDKITE_BUILD_NUMBER/'"$BUILDKITE_BUILD_NUMBER"'/g' Chart.yaml
+
+echo "Getting the kubectl credentials"
+
+docker run --rm \
+    -e REGION \
+    -e SERVICE_CLUSTER \
+    -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN \
+    -v $(pwd):/root \
+    -ti "${AWS_DEPLOYER}" \
+    /bin/bash -c \
+    "aws eks --region ${REGION} update-kubeconfig --name ${SERVICE_CLUSTER}"
+
+export HELM_DEPLOYMENT=$(docker run --rm -e CHART_NAME -v $(pwd):/root -ti "${AWS_DEPLOYER}" /bin/bash -c "helm ls"  | grep "${CHART_NAME}" | wc -l)
+
+if [[ "${HELM_DEPLOYMENT}"  -eq 0 ]]; then
+    docker run \
+    -e CHART_NAME \
+    -e CHART_NAMESPACE \
+    -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN \
+    -e BUILDKITE_BUILD_NUMBER \
+    -v $(pwd):/root \
+    -w /root \
+    -ti "${AWS_DEPLOYER}" \
+    /bin/bash -c \
+    "helm install --name "${CHART_NAME}" --namespace="${CHART_NAMESPACE:-default}" --set buildNumber="${BUILDKITE_BUILD_NUMBER}" . -f dev.yaml --debug"
+else
+    docker run \
+    -e CHART_NAME \
+    -e CHART_NAMESPACE \
+    -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN \
+    -e BUILDKITE_BUILD_NUMBER \
+    -v $(pwd):/root \
+    -w /root \
+    -ti "${AWS_DEPLOYER}" \
+    /bin/bash -c \
+    "helm upgrade "${CHART_NAME}" --namespace="${CHART_NAMESPACE:-default}" --set buildNumber="${BUILDKITE_BUILD_NUMBER}" . -f dev.yaml --debug"
+fi

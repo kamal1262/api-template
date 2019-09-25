@@ -1,0 +1,52 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: k8s-demo
+  labels:
+    name: k8s-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: k8s-demo
+  template:
+    metadata:
+      name: k8s-demo
+      labels:
+        name: k8s-demo
+    spec:
+      serviceAccountName: reporting-sa
+      containers:
+        - name: k8s-demo
+          image: 793999821937.dkr.ecr.ap-southeast-1.amazonaws.com/k8s-demo:latest
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
+          securityContext:
+           privileged: true
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 500m
+            limits:
+              memory: 512Mi
+              cpu: "1"
+          volumeMounts:
+            - name: docker-socket
+              mountPath: /var/run/docker.sock
+      volumes:
+        - name: docker-socket
+          hostPath: {path: /var/run/docker.sock}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s-demo
+spec:
+  type: NodePort
+  selector:
+      name: k8s-demo
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
