@@ -67,8 +67,8 @@ export CHART_NAME="$(grep "name" Chart.yaml | cut -d" " -f2)"
 
 echo "Setting the Build Number"
 # Below command is for testing on MAC.
-sed -i "" 's/BUILDKITE_BUILD_NUMBER/'"$BUILDKITE_BUILD_NUMBER"'/g' Chart.yaml
-#sed -i 's/BUILDKITE_BUILD_NUMBER/'"$BUILDKITE_BUILD_NUMBER"'/g' Chart.yaml
+#sed -i "" 's/BUILDKITE_BUILD_NUMBER/'"$BUILDKITE_BUILD_NUMBER"'/g' Chart.yaml
+sed -i 's/BUILDKITE_BUILD_NUMBER/'"$BUILDKITE_BUILD_NUMBER"'/g' Chart.yaml
 
 echo "Getting the kubectl credentials"
 
