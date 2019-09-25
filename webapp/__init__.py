@@ -44,11 +44,13 @@ def create_app(object_name):
     migrate.init_app(app, db)
 
     from .user import create_module as user_create_module
+    from .home import create_module as home_create_module
     from .errors import create_module as error_create_module
 
     rest_api: Api = Api(doc=False)
 
     user_create_module(rest_api)
+    home_create_module(rest_api)
     error_create_module(rest_api, app=app)
 
     rest_api.init_app(app)
