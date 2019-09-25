@@ -16,7 +16,7 @@ class HomeModuleTests(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_get_user(self):
+    def test_healthcheck(self):
         with self.client as c:
             request = c.get("/healthcheck")
             assert request.status_code == 200
