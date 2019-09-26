@@ -10,7 +10,7 @@ image:
 serviceAccountName: reporting-sa
 container:
   port: 8000
-  healthCheckUrl: /heartbeat
+  healthCheckUrl: /healthcheck
   resources:
     requests:
       memory: 200Mi
