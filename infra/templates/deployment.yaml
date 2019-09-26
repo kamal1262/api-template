@@ -24,7 +24,7 @@ spec:
       serviceAccountName: {{ .Values.serviceAccountName }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.buildNumber }}"
           ports:
             - containerPort: {{ .Values.container.port }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
