@@ -77,37 +77,12 @@ sed -i 's/BUILDKITE_BUILD_NUMBER/'"$BUILDKITE_BUILD_NUMBER"'/g' Chart.yaml
 
 echo "Getting the kubectl credentials"
 
-docker run --rm \
-    -e REGION \
-    -e SERVICE_CLUSTER \
-    -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN \
-    -v $(pwd):/root \
-    -ti "${AWS_DEPLOYER}" \
-    /bin/bash -c \
-    "aws eks --region ${REGION} update-kubeconfig --name ${SERVICE_CLUSTER}"
+aws eks --region "${REGION}" update-kubeconfig --name "${SERVICE_CLUSTER}"
 
-export HELM_DEPLOYMENT=$(docker run --rm -e CHART_NAME -v $(pwd):/root -ti "${AWS_DEPLOYER}" /bin/bash -c "helm ls"  | grep "${CHART_NAME}" | wc -l)
+export HELM_DEPLOYMENT=$(helm ls | grep "${CHART_NAME}" | wc -l)
 
 if [[ "${HELM_DEPLOYMENT}"  -eq 0 ]]; then
-    docker run \
-    -e CHART_NAME \
-    -e CHART_NAMESPACE \
-    -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN \
-    -e BUILDKITE_BUILD_NUMBER \
-    -v $(pwd):/root \
-    -w /root \
-    -ti "${AWS_DEPLOYER}" \
-    /bin/bash -c \
-    "helm install --name "${CHART_NAME}" --namespace="${CHART_NAMESPACE:-default}" --set buildNumber="${BUILDKITE_BUILD_NUMBER}" . -f dev.yaml --debug"
+    helm install --name "${CHART_NAME}" --namespace="${CHART_NAMESPACE:-default}" --set buildNumber="${BUILDKITE_BUILD_NUMBER}" . -f dev.yaml --debug
 else
-    docker run \
-    -e CHART_NAME \
-    -e CHART_NAMESPACE \
-    -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN \
-    -e BUILDKITE_BUILD_NUMBER \
-    -v $(pwd):/root \
-    -w /root \
-    -ti "${AWS_DEPLOYER}" \
-    /bin/bash -c \
-    "helm upgrade "${CHART_NAME}" --namespace="${CHART_NAMESPACE:-default}" --set buildNumber="${BUILDKITE_BUILD_NUMBER}" . -f dev.yaml --debug"
+    helm upgrade "${CHART_NAME}" --namespace="${CHART_NAMESPACE:-default}" --set buildNumber="${BUILDKITE_BUILD_NUMBER}" . -f dev.yaml --debug
 fi
