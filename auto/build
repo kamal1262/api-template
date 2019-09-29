@@ -37,22 +37,21 @@ if [[ -n "${ENVIRONMENT:-}" ]]; then
     if [[ "${ENVIRONMENT}" = "DEV" ]]; then
 
         export AWS_PROJECT_ID="793999821937"
-        echo "AWS Project ID => ${AWS_PROJECT_ID}"
 
     elif [[ "${ENVIRONMENT}" = "STAGING" ]]; then
 
         export AWS_PROJECT_ID="958356994665"
-        echo "AWS Project ID => ${AWS_PROJECT_ID}"
 
     elif [[ "${ENVIRONMENT}" = "PROD" ]]; then
 
         export AWS_PROJECT_ID="961063351939"
-        echo "AWS Project ID => ${AWS_PROJECT_ID}"
 
     else
         echo "Unsupported ENVIRONMENT Value, Exiting!!!"
         exit 1
     fi
+
+    echo "AWS Project ID => ${AWS_PROJECT_ID}"
     export IMAGE_URL="${AWS_PROJECT_ID}".dkr.ecr."${REGION}".amazonaws.com/"${IMAGE_NAME}"
     authenticate_to_ecr "${AWS_PROJECT_ID}" "${REGION}"
 else
