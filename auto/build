@@ -16,7 +16,7 @@ function exists()
 function create_ecr_repo {
 
     export REPO_NAME="${1}"
-    aws ecr describe-repositories --repository-names "${REPO_NAME}" || aws ecr create-repository --repository-name "${REPO_NAME}"
+    aws ecr describe-repositories --repository-names "${REPO_NAME}" --region "${AWS_REGION}" || aws ecr create-repository --repository-name "${REPO_NAME}" --region "${AWS_REGION}
 }
 
 function authenticate_to_ecr {
