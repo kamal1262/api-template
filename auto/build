@@ -4,7 +4,7 @@ set -euxo pipefail
 
 cd "$(dirname $0)/.."
 
-export REGION=ap-southeast-1
+export AWS_REGION="${AWS_REGION:=ap-southeast-1}"
 export IMAGE_NAME=api-template:"${BUILDKITE_BUILD_NUMBER:-latest}"
 export DOCKERFILE_PATH="Dockerfile"
 
@@ -32,9 +32,9 @@ function authenticate_to_ecr {
     fi
     echo "Authenticating to ECR"
     if [[ -n "${AWS_ACCESS_KEY_ID:-}" ]] && [[ -n "${AWS_SECRET_ACCESS_KEY:-}" ]] && [[ -n "${AWS_SESSION_TOKEN:-}" ]]; then 
-        eval $(docker run --network=host -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN --rm xueshanf/awscli aws ecr get-login --no-include-email --registry-ids $AWS_ACCOUNT_ID --region $REGION)
+        eval $(docker run --network=host -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN --rm xueshanf/awscli aws ecr get-login --no-include-email --registry-ids $AWS_ACCOUNT_ID --region $AWS_REGION)
     else
-        eval $(docker run --network=host --rm xueshanf/awscli aws ecr get-login --no-include-email --registry-ids $AWS_ACCOUNT_ID --region $REGION)
+        eval $(docker run --network=host --rm xueshanf/awscli aws ecr get-login --no-include-email --registry-ids $AWS_ACCOUNT_ID --region $AWS_REGION)
     fi
 }
 
@@ -60,8 +60,8 @@ if [[ -n "${ENVIRONMENT:-}" ]]; then
     echo "AWS Project ID => ${AWS_PROJECT_ID}"
     # creates ecr repo if it doesn't exist. Risky in case of typo.
     create_ecr_repo "${IMAGE_NAME}"
-    export IMAGE_URL="${AWS_PROJECT_ID}".dkr.ecr."${REGION}".amazonaws.com/"${IMAGE_NAME}"
-    authenticate_to_ecr "${AWS_PROJECT_ID}" "${REGION}"
+    export IMAGE_URL="${AWS_PROJECT_ID}".dkr.ecr."${AWS_REGION}".amazonaws.com/"${IMAGE_NAME}"
+    authenticate_to_ecr "${AWS_PROJECT_ID}" "${AWS_REGION}"
 else
     echo "Value of ENVIRONMENT can't be null, Exiting!!!"
     exit 1
