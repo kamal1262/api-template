@@ -47,7 +47,7 @@ ingress:
     alb.ingress.kubernetes.io/tags: Environment=dev,Team=data-engineering,app=api-template
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
     alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:958356994665:certificate/c07d42f4-a660-4a6e-afba-fe328f682a71
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-southeast-1:958356994665:certificate/36fc3a04-5b1a-443d-9a46-b75d720c8b79
     alb.ingress.kubernetes.io/healthcheck-path: /healthcheck
     alb.ingress.kubernetes.io/success-codes: 200-301
     alb.ingress.kubernetes.io/unhealthy-threshold-count: '8'
