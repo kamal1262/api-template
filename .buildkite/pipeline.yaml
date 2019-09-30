@@ -39,3 +39,23 @@ steps:
       queue: 'eks-dataservices-agent:ci'
       aws:account-id: 'awscloud.data-engineering.staging'
     branches: "buildkite-integration"
+
+  - label: "Build Production :docker: image"
+    command: "auto/build"
+    env:
+      ENVIRONMENT: "PROD"
+    agents:
+      queue: 'eks-dataservices-agent:ci'
+      aws:account-id: 'awscloud.data-engineering.production'
+    branches: "buildkite-integration"
+
+  - block: "Deploy to Production :kubernetes: Cluster!!!"
+
+  - label: "Deploy to :kubernetes: Staging "
+    command: "auto/deploy"
+    env:
+      ENVIRONMENT: "PROD"
+    agents:
+      queue: 'eks-dataservices-agent:ci'
+      aws:account-id: 'awscloud.data-engineering.production'
+    branches: "buildkite-integration"

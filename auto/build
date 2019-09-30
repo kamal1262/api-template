@@ -72,7 +72,7 @@ echo "Building the docker image"
 docker build --network=host -t "${IMAGE_NAME}" -f "${DOCKERFILE_PATH}" .
 
 echo "Tagging the image"
-docker tag "${IMAGE_NAME}" "${IMAGE_URL}"
+docker tag "${IMAGE_NAME}":"${BUILDKITE_BUILD_NUMBER:-latest}" "${IMAGE_URL}"
 
 echo "Pushing the image to Container Registry"
 docker push "${IMAGE_URL}"
