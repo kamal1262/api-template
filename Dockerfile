@@ -12,7 +12,7 @@ WORKDIR /app
 
 COPY . /app
 
-RUN pip install gunicorn
+RUN pip install gunicorn pymysql
 
 EXPOSE 8000
 
