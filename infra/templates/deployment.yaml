@@ -25,6 +25,8 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.buildNumber }}"
+          env:
+            {{- toYaml .Values.container.environments | nindent 12 }}
           ports:
             - containerPort: {{ .Values.container.port }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
