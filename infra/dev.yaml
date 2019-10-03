@@ -28,13 +28,13 @@ container:
       value: LOG_ERROR
 
     - name: XRAY_ENABLED
-      value: True
+      value: "True"
 
     - name: XRAY_INSPECT_QUERY
-      value: False
+      value: "False"
 
     - name: AWS_XRAY_SDK_ENABLED
-      value: True
+      value: "True"
 
     # Environment
     - name: FLASK_ENV
@@ -46,7 +46,7 @@ container:
 
     # Flask port, default port is 5000
     - name: FLASK_RUN_PORT
-      value: 8000
+      value: "8000"
 
     # Logging level
     - name: LOG_LEVEL
