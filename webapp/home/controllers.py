@@ -22,5 +22,4 @@ class HealthCheckApi(SwaggerView):
           200:
             description: Healthcheck passed.
         """
-        self.logger.info("health check")
         return "OK", 200
