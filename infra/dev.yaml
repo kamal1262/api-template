@@ -127,4 +127,4 @@ secrets:
 configMap:
   name: api-template-configmap
   data:
-    database_uri: mysql://dbadmin@aa1ocf3l9bfwyfv.csypt18aokzy.ap-southeast-1.rds.amazonaws.com:3306/commonsDB
+    database_uri: mysql://dbadmin@ca2zergwylextf.csypt18aokzy.ap-southeast-1.rds.amazonaws.com:3306/commonsDB
