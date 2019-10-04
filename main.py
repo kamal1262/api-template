@@ -5,7 +5,6 @@ from flask_cors import CORS
 
 from webapp import create_app
 
-print(os.environ)
 env = os.environ.get("FLASK_ENV", "development")
 app = create_app("config.%sConfig" % env.capitalize())
 
