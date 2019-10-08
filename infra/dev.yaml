@@ -71,7 +71,7 @@ container:
           key: database_uri
 
     - name: SQLALCHEMY_POOL_RECYCLE
-      value: 3600
+      value: "3600"
 
 imagePullSecrets: []
 nameOverride: ""
