@@ -15,23 +15,15 @@ def create_module(api, **kwargs):
     @api.errorhandler(UserNotFoundException)
     def handle_user_not_found(e):
         logger.error(e, exc_info=True)
-        logger.info("sdfsfssdsfds")
         _log_to_segment(e, 404)
         return {"message": str(e)}, 404
 
     @api.errorhandler(HTTPException)
+    @app.errorhandler(Exception)
     def handle_http_exception(e):
         logger.error(e, exc_info=True)
-        _log_to_segment(e)
+        _log_to_segment(e, e.code)
         return {"message": str(e)}, e.code
-
-    @api.errorhandler(Exception)
-    @app.errorhandler(Exception)
-    @app.errorhandler(500)
-    def handle_internal_server_error(e):
-        logger.error(e, exc_info=True)
-        _log_to_segment(e, 500)
-        return {"message": str(e)}, 500
 
     def _log_to_segment(e, code=None):
         current_segment = xray_recorder.current_segment()

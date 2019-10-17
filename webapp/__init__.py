@@ -9,7 +9,6 @@ from flask_migrate import Migrate
 from flask_restplus import Api
 from flask_sqlalchemy import SQLAlchemy
 
-
 db = (
     XRayFlaskSqlAlchemy()
     if (
@@ -57,9 +56,23 @@ def create_app(object_name):
 
     xray_recorder.configure(
         service=app.config["APP_TITLE"],
-        sampling=False,
         daemon_address=app.config["XRAY"]["daemon_url"],
+        sampling_rules={
+            "version": 2,
+            "rules": [
+                {
+                    "description": "Healthcheck",
+                    "host": "*",
+                    "http_method": "GET",
+                    "url_path": "/healthcheck*",
+                    "fixed_target": 0,
+                    "rate": 0.0,
+                }
+            ],
+            "default": {"fixed_target": 1, "rate": 0.1},
+        },
     )
+
     XRayMiddleware(app, xray_recorder)
 
     return app

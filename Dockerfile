@@ -1,10 +1,15 @@
-FROM python:3.7-alpine
+FROM python:3.7-slim-buster
 
-COPY . /app
+COPY requirements.txt /
+
+RUN pip install -r requirements.txt
+
+RUN apt-get update && \
+    apt-get install -y curl vim
 
 WORKDIR /app
 
-RUN pip install -r requirements.txt
+COPY . /app
 
 RUN pip install gunicorn
 

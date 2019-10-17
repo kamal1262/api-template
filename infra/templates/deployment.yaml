@@ -1,0 +1,54 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-deployment
+  labels:
+    app: {{ .Chart.Name }}
+    department: {{ .Values.department }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+      department: {{ .Values.department }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+        department: {{ .Values.department }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ .Values.serviceAccountName }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.buildNumber }}"
+          env:
+            {{- toYaml .Values.container.environments | nindent 12 }}
+          ports:
+            - containerPort: {{ .Values.container.port }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.container.healthCheckUrl }}
+              port: {{ .Values.container.port }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.container.healthCheckUrl }}
+              port: {{ .Values.container.port }}
+          resources:
+            {{- toYaml .Values.container.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

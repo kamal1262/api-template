@@ -25,6 +25,7 @@ class Config(object):
         "inspect_sql_query": os.environ.get("XRAY_INSPECT_QUERY", "False"),
     }
     JWT_ACCESS_TOKEN_EXPIRES = False
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URI")
 
 
 class ProductionConfig(Config):
@@ -33,7 +34,6 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     ENV = "development"
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URI")
 
 
 class TestConfig(Config):

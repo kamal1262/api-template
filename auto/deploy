@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+
+set -euox pipefail
+
+cd "$(dirname $0)/../infra"
+
+export DEPLOYER_VERSION=12
+export AWS_REGION=ap-southeast-1
+
+function exists()
+{
+  command -v "$1" >/dev/null 2>&1
+}
+
+function authenticate_to_ecr {
+
+    AWS_ACCOUNT_ID="${1}"
+    REGION="${2}"
+
+    if exists docker ; then
+        echo "docker found in PATH."
+    else
+        echo "docker NOT found in PATH, Exiting!!!"
+        exit 1
+    fi
+    echo "Authenticating to ECR"
+    if [[ -n "${AWS_ACCESS_KEY_ID:-}" ]] && [[ -n "${AWS_SECRET_ACCESS_KEY:-}" ]] && [[ -n "${AWS_SESSION_TOKEN:-}" ]]; then 
+        eval $(docker run --network=host -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN --rm xueshanf/awscli aws ecr get-login --no-include-email --registry-ids $AWS_ACCOUNT_ID --region $AWS_REGION)
+    else
+        eval $(docker run --network=host --rm xueshanf/awscli aws ecr get-login --no-include-email --registry-ids $AWS_ACCOUNT_ID --region $AWS_REGION)
+    fi
+}
+
+
+if [[ -n "${ENVIRONMENT:-}" ]]; then
+    echo "Environment is ${ENVIRONMENT}"
+    if [[ "${ENVIRONMENT}" = "DEV" ]]; then
+
+        export AWS_ACCOUNT_ID="793999821937"
+        export SERVICE_CLUSTER="dev-service-cluster"
+        export VALUES_FILE="dev.yaml"
+
+    elif [[ "${ENVIRONMENT}" = "STAGING" ]]; then
+
+        export AWS_ACCOUNT_ID="958356994665"
+        export SERVICE_CLUSTER="staging-service-cluster"
+        export VALUES_FILE="staging.yaml"
+
+    elif [[ "${ENVIRONMENT}" = "PROD" ]]; then
+
+        export AWS_ACCOUNT_ID="961063351939"
+        export SERVICE_CLUSTER="prod-service-cluster"
+        export VALUES_FILE="prod.yaml"
+
+    else
+        echo "Unsupported ENVIRONMENT Value, Exiting!!!"
+        exit 1
+    fi
+
+    echo "AWS Account ID => ${AWS_ACCOUNT_ID}, Cluster => ${SERVICE_CLUSTER}"
+    authenticate_to_ecr "${AWS_ACCOUNT_ID}" "${AWS_REGION}"
+else
+    echo "ENVIRONMENT Value can't be null, Exiting!!!"
+    exit 1
+fi
+
+echo "Deploying helm chart"
+
+export AWS_DEPLOYER="${AWS_ACCOUNT_ID}".dkr.ecr."${AWS_REGION}".amazonaws.com/aws-deployer:"${DEPLOYER_VERSION}"
+export CHART_NAME="$(grep "name" Chart.yaml | cut -d" " -f2)"
+
+echo "Setting the Build Number"
+# Below command is for testing on MAC.
+#sed -i "" 's/BUILDKITE_BUILD_NUMBER/'"${BUILDKITE_BUILD_NUMBER:-latest}"'/g' Chart.yaml
+sed -i 's/BUILDKITE_BUILD_NUMBER/'"${BUILDKITE_BUILD_NUMBER:-latest}"'/g' Chart.yaml
+
+echo "Getting the kubectl credentials"
+
+aws eks --region "${AWS_REGION}" update-kubeconfig --name "${SERVICE_CLUSTER}"
+
+export HELM_DEPLOYMENT=$(helm ls | grep "${CHART_NAME}" | wc -l)
+
+if [[ "${HELM_DEPLOYMENT}"  -eq 0 ]]; then
+    helm install --name "${CHART_NAME}" --namespace="${CHART_NAMESPACE:-default}" --set buildNumber="${BUILDKITE_BUILD_NUMBER:-latest}" . -f "${VALUES_FILE}" --debug
+else
+    helm upgrade "${CHART_NAME}" --namespace="${CHART_NAMESPACE:-default}" --set buildNumber="${BUILDKITE_BUILD_NUMBER:-latest}" . -f "${VALUES_FILE}" --debug
+fi
