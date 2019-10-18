@@ -22,7 +22,7 @@ container:
 
     # AWS X-RAY
     - name: AWS_XRAY_DAEMON_ADDRESS
-      value: udp:xray-service.default:2000
+      value: udp:xray-service.default:2000 tcp:xray-service.default:2000 
 
     - name: AWS_XRAY_CONTEXT_MISSING
       value: LOG_ERROR
