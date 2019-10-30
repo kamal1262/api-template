@@ -127,3 +127,5 @@ dmypy.json
 # Pycharm settings
 .idea/
 
+# Boto config
+.boto

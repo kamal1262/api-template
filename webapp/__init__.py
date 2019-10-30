@@ -8,6 +8,10 @@ from flask import Flask, current_app
 from flask_migrate import Migrate
 from flask_restplus import Api
 from flask_sqlalchemy import SQLAlchemy
+from .messagequeue.in_memory_publisher import InMemoryPublisher  # noqa: F401
+from .messagequeue.sqs_publisher import SQSPublisher  # noqa: F401
+from .messagequeue.in_memory_consumer import InMemoryConsumer  # noqa: F401
+from .messagequeue.sqs_consumer import SQSConsumer  # noqa: F401
 
 db = (
     XRayFlaskSqlAlchemy()
@@ -35,6 +39,20 @@ def create_app(object_name):
     current_app.logger = create_logger(
         app.config["LOG_LEVEL"], app.config["LOG_FORMAT"]
     )
+
+    if app.config["MESSAGE_PUBLISHER"]:
+        MessagePublisher = globals()[app.config["MESSAGE_PUBLISHER"]]
+        message_publisher = MessagePublisher(app)
+
+        current_app.message_publisher = message_publisher
+    else:
+        current_app.message_publisher = None
+
+    if app.config["TOPIC_CONSUMERS"]:
+        for item in app.config["TOPIC_CONSUMERS"]:
+            config = item.split(":")
+            MessageConsumer = globals()[config[1]]
+            MessageConsumer(app, config[0])
 
     db.init_app(app)
 
@@ -74,6 +92,22 @@ def create_app(object_name):
     )
 
     XRayMiddleware(app, xray_recorder)
+
+    # def perform_task(q: Queue):
+    #     while True:
+    #         print(q.get())
+    #         q.task_done()
+    #
+    # q = Queue(maxsize=0)
+    # num_threads = 10
+    #
+    # for i in range(num_threads):
+    #     worker = Thread(target=perform_task, args=(q,))
+    #     worker.setDaemon(True)
+    #     worker.start()
+    #
+    # for x in range(100):
+    #     q.put(x)
 
     return app
 
