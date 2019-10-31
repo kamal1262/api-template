@@ -14,7 +14,7 @@ class InMemoryPublisher:
         if topic in self.q:
             self.q.get(topic).put(message)
         else:
-            self.q.get("__default__").put(message)
+            raise Exception(f"Topic {topic} is not found/configured properly")
 
     def get_queue(self, topic: str) -> Queue:
         return self.q.get(topic)

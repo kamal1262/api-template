@@ -7,6 +7,7 @@ from flask import Flask, current_app
 
 class SQSConsumer:
     def __init__(self, app: Flask, topic: str):
+        self.interval = current_app.config["TOPIC_INTERVAL"]
         self.logger = current_app.logger
         self.sqs_client = boto3.client("sqs", region_name="ap-southeast-1")
         self.queue = None
@@ -34,4 +35,4 @@ class SQSConsumer:
                     self.sqs_client.delete_message(
                         QueueUrl=queue, ReceiptHandle=message["ReceiptHandle"]
                     )
-            time.sleep(30)
+            time.sleep(self.interval)
