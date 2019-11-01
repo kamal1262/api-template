@@ -1,4 +1,4 @@
-from queue import Queue
+from queue import Queue, Empty
 from threading import Thread
 
 from flask import Flask, current_app
@@ -19,6 +19,11 @@ class InMemoryConsumer:
 
     def process(self, queue: Queue):
         while True:
-            self.logger.info(queue.get(timeout=0.1))
-            queue.task_done()
+            try:
+                task = queue.get(False)
+            except Empty:
+                pass
+            else:
+                self.logger.info(task)
+                queue.task_done()
             time.sleep(self.interval)
