@@ -77,13 +77,13 @@ container:
       value: "api-template-queue"
 
     - name: PUBLISHER_TYPE
-      value: "InMemoryPublisher"
+      value: "SQSPublisher"
 
     - name: TOPIC_CONSUMERS
-      value: "api-template-queue:InMemoryConsumer"
+      value: "api-template-queue:SQSConsumer"
 
     - name: TOPIC_INTERVAL
-      value: "10"
+      value: "2"
 
 imagePullSecrets: []
 nameOverride: ""
