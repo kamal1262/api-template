@@ -73,6 +73,18 @@ container:
     - name: SQLALCHEMY_POOL_RECYCLE
       value: "3600"
 
+    - name: MESSAGE_TOPICS
+      value: "api-template-queue"
+
+    - name: PUBLISHER_TYPE
+      value: "InMemoryPublisher"
+
+    - name: TOPIC_CONSUMERS
+      value: "api-template-queue:InMemoryConsumer"
+
+    - name: TOPIC_INTERVAL
+      value: "10"
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
