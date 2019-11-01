@@ -9,6 +9,11 @@ from flask_migrate import Migrate
 from flask_restplus import Api
 from flask_sqlalchemy import SQLAlchemy
 
+from .messagequeue.in_memory_consumer import InMemoryConsumer  # noqa: F401
+from .messagequeue.in_memory_publisher import InMemoryPublisher  # noqa: F401
+from .messagequeue.sqs_consumer import SQSConsumer  # noqa: F401
+from .messagequeue.sqs_publisher import SQSPublisher  # noqa: F401
+
 db = (
     XRayFlaskSqlAlchemy()
     if (
@@ -35,6 +40,10 @@ def create_app(object_name):
     current_app.logger = create_logger(
         app.config["LOG_LEVEL"], app.config["LOG_FORMAT"]
     )
+
+    current_app.message_publisher = create_message_publisher(app)
+
+    init_message_consumer(app)
 
     db.init_app(app)
 
@@ -78,6 +87,25 @@ def create_app(object_name):
     return app
 
 
+def init_message_consumer(app):
+    if app.config["TOPIC_CONSUMERS"]:
+        for item in app.config["TOPIC_CONSUMERS"]:
+            if item:
+                config = item.split(":")
+                MessageConsumer = globals()[config[1]]
+                MessageConsumer(app, config[0])
+
+
+def create_message_publisher(app):
+    if app.config["MESSAGE_PUBLISHER"]:
+        MessagePublisher = globals()[app.config["MESSAGE_PUBLISHER"]]
+        message_publisher = MessagePublisher(app)
+
+        return message_publisher
+    else:
+        return None
+
+
 def create_logger(log_level: int, log_format: str) -> logging.Logger:
     """
     A function to create custom logger for application usage,
@@ -94,5 +122,6 @@ def create_logger(log_level: int, log_format: str) -> logging.Logger:
     logger.setLevel(log_level)
 
     logger.addHandler(logger_handler)
+    logging.getLogger("werkzeug").addHandler(logger_handler)
 
     return logger

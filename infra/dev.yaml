@@ -22,7 +22,7 @@ container:
 
     # AWS X-RAY
     - name: AWS_XRAY_DAEMON_ADDRESS
-      value: xray-service.default:2000
+      value: udp:xray-service.default:2000 tcp:xray-service.default:2000 
 
     - name: AWS_XRAY_CONTEXT_MISSING
       value: LOG_ERROR
@@ -72,6 +72,18 @@ container:
 
     - name: SQLALCHEMY_POOL_RECYCLE
       value: "3600"
+
+    - name: MESSAGE_TOPICS
+      value: "api-template-queue"
+
+    - name: PUBLISHER_TYPE
+      value: "InMemoryPublisher"
+
+    - name: TOPIC_CONSUMERS
+      value: "api-template-queue:InMemoryConsumer"
+
+    - name: TOPIC_INTERVAL
+      value: "10"
 
 imagePullSecrets: []
 nameOverride: ""

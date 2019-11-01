@@ -26,6 +26,10 @@ class Config(object):
     }
     JWT_ACCESS_TOKEN_EXPIRES = False
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URI")
+    MESSAGE_PUBLISHER = os.environ.get("PUBLISHER_TYPE")
+    MESSAGE_TOPICS = os.environ.get("MESSAGE_TOPICS", "").split(",")
+    TOPIC_CONSUMERS = os.environ.get("TOPIC_CONSUMERS", "").split(",")
+    TOPIC_INTERVAL = int(os.environ.get("TOPIC_INTERVAL", "30"))
 
 
 class ProductionConfig(Config):

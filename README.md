@@ -180,6 +180,34 @@ At the moment we are using [Black](https://github.com/psf/black) and
   pre-commit run  --all-files
   ```
 
+## Queue and asynchronous processing
+Asynchronous processing is useful when we have tasks that we want to process on a different thread, a very common use case is 
+sending emails, in most cases, we won't have to wait for the whole email sending process to complete before we continue to 
+another process.
+
+To use queue, we need to have a publisher and consumer. Every publisher and consumer will be using one topic.
+- Producer will be the code that create and send the payload to a queue.
+- Consumer will take payload from queue and process it.
+
+There will be 3 different scenarios
+- The code will consist the publisher and consumer code.
+- The code only consist the publisher code, with the assumption that some other services outside of this application context.
+- The code only consist the consumer code, with the assumption that this application is processing payload published by others.
+
+### Configuration
+You can configure the queue behavior in `.env` file.
+`MESSAGE_TOPICS=topic,topic2`
+- define how many topics you will be using in the system
+
+`TOPIC_CONSUMERS=topic:InMemoryConsumer,topic2:InMemoryConsumer`
+- define the consumers and types of each consumer
+
+`PUBLISHER_TYPE=InMemoryPublisher`
+- define the publisher type
+
+At the moment the code supports `InMemory` and `SQS` for both publisher and consumer. Do refer to these codes when you
+want to create new publisher or consumer. `InMemory` should only be used in development or testing environment.
+
 ## Testing
 ### Pre-requisites
 Duplicate `example.env` to `.env.test`, the test runner will load the environment variable from this file.
