@@ -19,6 +19,6 @@ class InMemoryConsumer:
 
     def process(self, queue: Queue):
         while True:
-            self.logger.info(queue.get())
+            self.logger.info(queue.get(timeout=0.1))
             queue.task_done()
             time.sleep(self.interval)

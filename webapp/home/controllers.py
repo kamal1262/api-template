@@ -2,6 +2,7 @@ import logging
 
 from flasgger import SwaggerView
 from flask import current_app
+from flask_restplus import Resource
 
 
 class HealthCheckApi(SwaggerView):
@@ -23,3 +24,14 @@ class HealthCheckApi(SwaggerView):
             description: Healthcheck passed.
         """
         return "OK", 200
+
+
+class HomeApi(Resource):
+    def __init__(self, *args, **kwargs):
+        self.message_publisher = current_app.message_publisher
+        self.logger: logging.Logger = current_app.logger
+
+    def get(self):
+        self.message_publisher.publish("api-template-queue", "test")
+        self.logger.info("ok")
+        return "Welcome"
