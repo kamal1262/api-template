@@ -9,10 +9,9 @@ from flask_migrate import Migrate
 from flask_restplus import Api
 from flask_sqlalchemy import SQLAlchemy
 
-from .messagequeue.in_memory_consumer import InMemoryConsumer  # noqa: F401
-from .messagequeue.in_memory_publisher import InMemoryPublisher  # noqa: F401
-from .messagequeue.sqs_consumer import SQSConsumer  # noqa: F401
-from .messagequeue.sqs_publisher import SQSPublisher  # noqa: F401
+from .messagequeue.consumer import InMemoryConsumer, SQSConsumer  # noqa: F401
+from .messagequeue.producer import InMemoryProducer, SQSProducer  # noqa: F401
+from .messagequeue.sample_consumer import SampleConsumer  # noqa: F401
 
 db = (
     XRayFlaskSqlAlchemy()
@@ -41,7 +40,7 @@ def create_app(object_name):
         app.config["LOG_LEVEL"], app.config["LOG_FORMAT"]
     )
 
-    current_app.message_publisher = create_message_publisher(app)
+    current_app.message_producer = create_message_producer(app)
 
     init_message_consumer(app)
 
@@ -92,16 +91,17 @@ def init_message_consumer(app):
         for item in app.config["TOPIC_CONSUMERS"]:
             if item:
                 config = item.split(":")
-                MessageConsumer = globals()[config[1]]
-                MessageConsumer(app, config[0])
+                MessageConsumer = globals()[config[0]]
+                MessageQueueConsumer = globals()[config[1]]
+                MessageConsumer(MessageQueueConsumer)
 
 
-def create_message_publisher(app):
-    if app.config["MESSAGE_PUBLISHER"]:
-        MessagePublisher = globals()[app.config["MESSAGE_PUBLISHER"]]
-        message_publisher = MessagePublisher(app)
+def create_message_producer(app):
+    if app.config["MESSAGE_PRODUCER"]:
+        MessageProducer = globals()[app.config["MESSAGE_PRODUCER"]]
+        message_producer = MessageProducer(app)
 
-        return message_publisher
+        return message_producer
     else:
         return None
 
@@ -123,5 +123,6 @@ def create_logger(log_level: int, log_format: str) -> logging.Logger:
 
     logger.addHandler(logger_handler)
     logging.getLogger("werkzeug").addHandler(logger_handler)
+    logging.getLogger("werkzeug").setLevel("ERROR")
 
     return logger

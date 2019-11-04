@@ -28,10 +28,10 @@ class HealthCheckApi(SwaggerView):
 
 class HomeApi(Resource):
     def __init__(self, *args, **kwargs):
-        self.message_publisher = current_app.message_publisher
+        self.message_producer = current_app.message_producer
         self.logger: logging.Logger = current_app.logger
 
     def get(self):
-        self.message_publisher.publish("api-template-queue", "test")
+        self.message_producer.publish("api-template-queue", "test")
         self.logger.info("ok")
         return "Welcome"

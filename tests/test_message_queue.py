@@ -21,8 +21,8 @@ class MessageQueueTests(unittest.TestCase):
         with self.app_context:
             topic = "topic"
             message = "message"
-            self.app.message_publisher.publish(topic, message)
-            queue: Queue = self.app.message_publisher.get_queue(topic)
+            self.app.message_producer.publish(topic, message)
+            queue: Queue = self.app.message_producer.get_queue(topic)
             assert queue.get() == message
 
     def test_send_message_to_non_configured_queue(self):
@@ -30,7 +30,7 @@ class MessageQueueTests(unittest.TestCase):
             invalid_topic = "invalid_topic"
             message = "message"
             with self.assertRaises(Exception) as context:
-                self.app.message_publisher.publish(invalid_topic, message)
+                self.app.message_producer.publish(invalid_topic, message)
             self.assertTrue(
                 f"Topic {invalid_topic} is not found/configured properly"
                 in str(context.exception)

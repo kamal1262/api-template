@@ -73,14 +73,14 @@ container:
     - name: SQLALCHEMY_POOL_RECYCLE
       value: "3600"
 
-    - name: MESSAGE_TOPICS
+    - name: PRODUCER_TOPICS
       value: "api-template-queue"
 
-    - name: PUBLISHER_TYPE
-      value: "SQSPublisher"
+    - name: PRODUCER_TYPE
+      value: "InMemoryPublisher"
 
     - name: TOPIC_CONSUMERS
-      value: "api-template-queue:SQSConsumer"
+      value: "SampleConsumer:InMemoryConsumer"
 
     - name: TOPIC_INTERVAL
       value: "2"
