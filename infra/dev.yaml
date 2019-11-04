@@ -77,7 +77,7 @@ container:
       value: "api-template-queue"
 
     - name: PRODUCER_TYPE
-      value: "InMemoryPublisher"
+      value: "InMemoryProducer"
 
     - name: TOPIC_CONSUMERS
       value: "SampleConsumer:InMemoryConsumer"
