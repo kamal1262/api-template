@@ -19,7 +19,7 @@ db = (
         os.environ.get("XRAY_ENABLED", "False") == "True"
         and os.environ.get("XRAY_INSPECT_QUERY", "False") == "True"
     )
-    else SQLAlchemy()
+    else SQLAlchemy(engine_options={"pool_pre_ping": True})
 )
 migrate = Migrate()
 

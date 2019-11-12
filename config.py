@@ -7,6 +7,7 @@ class Config(object):
     APP_TITLE = os.environ.get("TITLE", default="API")
     JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_POOL_RECYCLE = int(os.environ.get("SQLALCHEMY_POOL_RECYCLE", 3600))
     LOG_FORMAT = "[%(asctime)s] %(module)s - %(levelname)s: %(message)s"
     LOG_LEVEL = os.environ.get("LOG_LEVEL", default="INFO")
     ERROR_404_HELP = False
