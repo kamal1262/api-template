@@ -14,7 +14,7 @@ from .messagequeue.producer import InMemoryProducer, SQSProducer  # noqa: F401
 from .messagequeue.sample_consumer import SampleConsumer  # noqa: F401
 
 db = (
-    XRayFlaskSqlAlchemy()
+    XRayFlaskSqlAlchemy(engine_options={"pool_pre_ping": True})
     if (
         os.environ.get("XRAY_ENABLED", "False") == "True"
         and os.environ.get("XRAY_INSPECT_QUERY", "False") == "True"
