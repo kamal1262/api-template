@@ -19,7 +19,8 @@ container:
       memory: 512Mi
       cpu: "1"
   environments:
-
+    - name: FLASK_DEBUG
+      value: "0"
     # AWS X-RAY
     - name: AWS_XRAY_DAEMON_ADDRESS
       value: udp:xray-service.default:2000 tcp:xray-service.default:2000 
