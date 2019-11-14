@@ -72,7 +72,7 @@ container:
           key: database_uri
 
     - name: SQLALCHEMY_POOL_RECYCLE
-      value: "300"
+      value: "280"
 
     - name: PRODUCER_TOPICS
       value: "api-template-queue"
@@ -143,4 +143,4 @@ secrets:
 configMap:
   name: api-template-configmap
   data:
-    database_uri: mysql+pymysql://dbadmin:bgukeeHrJr24ezsrLWKz@ca2zergwylextf.csypt18aokzy.ap-southeast-1.rds.amazonaws.com:3306/commonsDB
+    database_uri: mysql+pymysql://dbadmin:bgukeeHrJr24ezsrLWKz@ca2zergwylextf.csypt18aokzy.ap-southeast-1.rds.amazonaws.com:3306/commonsDB?connect_timeout=60
