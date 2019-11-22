@@ -32,7 +32,12 @@ class UserService:
         self.db = db
 
     def list_all(self):
-        return self.db.session.query(User).all()
+        try:
+            users = self.db.session.query(User).all()
+            self.db.session.commit()
+            return users
+        except Exception:
+            self.db.session.rollback()
 
     def find_by_id(self, request: GetUserRequest):
         request.validate()

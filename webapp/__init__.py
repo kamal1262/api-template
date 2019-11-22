@@ -18,7 +18,14 @@ db = (
         os.environ.get("XRAY_ENABLED", "False") == "True"
         and os.environ.get("XRAY_INSPECT_QUERY", "False") == "True"
     )
-    else SQLAlchemy(engine_options={"pool_pre_ping": True, "pool_recycle": 10})
+    else SQLAlchemy(
+        engine_options={
+            "pool_pre_ping": True,
+            "pool_recycle": 10,
+            "echo": True,
+            "echo_pool": True,
+        }
+    )
 )
 migrate = Migrate()
 
@@ -124,5 +131,7 @@ def create_logger(log_level: int, log_format: str) -> logging.Logger:
     logger.addHandler(logger_handler)
     logging.getLogger("werkzeug").addHandler(logger_handler)
     logging.getLogger("werkzeug").setLevel("ERROR")
+
+    logging.getLogger("sqlalchemy.pool").setLevel(logging.DEBUG)
 
     return logger
