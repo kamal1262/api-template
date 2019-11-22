@@ -35,6 +35,7 @@ def create_app(object_name):
     app.config.from_object(object_name)
 
     db.init_app(app)
+    migrate.init_app(app, db)
 
     app.app_context().push()
     current_app.logger = create_logger(
@@ -48,8 +49,6 @@ def create_app(object_name):
     # db.init_app(app)
 
     from .user.models import User  # noqa: F401
-
-    migrate.init_app(app, db)
 
     from .user import create_module as user_create_module
     from .home import create_module as home_create_module
