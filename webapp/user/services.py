@@ -32,18 +32,17 @@ class UserService:
         self.db = db
 
     def list_all(self):
-        try:
-            users = self.db.session.query(User).all()
-            self.db.session.commit()
-            return users
-        except Exception:
-            self.db.session.rollback()
+        session = self.db.create_scoped_session()
+        users = session.query(User).all()
+        # self.db.session.autocommit
+        return users
 
     def find_by_id(self, request: GetUserRequest):
         request.validate()
         user: User = self.__get_user(request.user_id)
         if user is None:
             raise UserNotFoundException("User not found")
+        self.db.session.commit()
         return user
 
     def add_user(self, request: AddUserRequest):
