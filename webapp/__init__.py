@@ -8,6 +8,7 @@ from flask import Flask, current_app
 from flask_migrate import Migrate
 from flask_restplus import Api
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.pool import NullPool
 
 from .messagequeue.consumer import InMemoryConsumer, SQSConsumer  # noqa: F401
 from .messagequeue.producer import InMemoryProducer, SQSProducer  # noqa: F401
@@ -19,7 +20,7 @@ db = (
         os.environ.get("XRAY_ENABLED", "False") == "True"
         and os.environ.get("XRAY_INSPECT_QUERY", "False") == "True"
     )
-    else SQLAlchemy(engine_options={"pool_pre_ping": True})
+    else SQLAlchemy(engine_options={"pool_pre_ping": True, "poolclass": NullPool})
 )
 migrate = Migrate()
 
