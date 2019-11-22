@@ -32,9 +32,8 @@ class UserService:
         self.db = db
 
     def list_all(self):
-        session = self.db.create_scoped_session()
-        users = session.query(User).all()
-        # self.db.session.autocommit
+        users = self.db.session.query(User).all()
+        self.db.session.commit()
         return users
 
     def find_by_id(self, request: GetUserRequest):
