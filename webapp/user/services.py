@@ -32,7 +32,7 @@ class UserService:
         self.db = db
 
     def list_all(self):
-        return db.session.query(User).all()
+        return self.db.session.query(User).all()
 
     def find_by_id(self, request: GetUserRequest):
         request.validate()
@@ -69,4 +69,4 @@ class UserService:
         return user
 
     def __get_user(self, user_id: int) -> User:
-        return db.session.query(User).get(user_id)
+        return self.db.session.query(User).get(user_id)
