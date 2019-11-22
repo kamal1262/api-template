@@ -34,6 +34,8 @@ def create_app(object_name):
     app = Flask(__name__)
     app.config.from_object(object_name)
 
+    db.init_app(app)
+
     app.app_context().push()
     current_app.logger = create_logger(
         app.config["LOG_LEVEL"], app.config["LOG_FORMAT"]
@@ -42,8 +44,8 @@ def create_app(object_name):
     current_app.message_producer = create_message_producer(app)
 
     init_message_consumer(app)
-
-    db.init_app(app)
+    # db = SQLAlchemy(engine_options={"pool_pre_ping": True, "pool_recycle": 10})
+    # db.init_app(app)
 
     from .user.models import User  # noqa: F401
 
