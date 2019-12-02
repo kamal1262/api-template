@@ -90,6 +90,9 @@ def create_app(object_name):
 
     XRayMiddleware(app, xray_recorder)
 
+    @app.teardown_request
+    def teardown_request():
+        db.session.remove()
     return app
 
 
