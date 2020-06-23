@@ -7,7 +7,7 @@ image:
   repository: 793999821937.dkr.ecr.ap-southeast-1.amazonaws.com/api-template
   tag: latest
   pullPolicy: Always
-serviceAccountName: reporting-sa
+#serviceAccountName: reporting-sa
 container:
   port: 8000
   healthCheckUrl: /healthcheck
@@ -107,6 +107,7 @@ ingress:
     alb.ingress.kubernetes.io/healthcheck-path: /healthcheck
     alb.ingress.kubernetes.io/success-codes: 200-301
     alb.ingress.kubernetes.io/unhealthy-threshold-count: '8'
+    alb.ingress.kubernetes.io/subnets: subnet-05e7f58e4756ba096,subnet-057ece57a3546225d,subnet-0f0b8bd265f8eeea4
   hosts:
     host: test.dev.data.rea-asia.com
     paths: /*

@@ -2,20 +2,46 @@
 
 set -euox pipefail
 
-cd "$(dirname $0)/../infra"
+cd "$(dirname "$0")/../infra"
 
 export DEPLOYER_VERSION=12
-export AWS_REGION=ap-southeast-1
+export AWS_REGION=${AWS_REGION:-ap-southeast-1}
+export CHART_NAMESPACE="default"
 
 function exists()
 {
   command -v "$1" >/dev/null 2>&1
 }
 
+function decrypt_kms {
+    ENCRYPTED_FILE="${1:-}"
+    PLAINTEXT_FILE="${2:-}"
+    aws kms decrypt \
+        --region "${AWS_REGION}" \
+        --ciphertext-blob fileb://"${ENCRYPTED_FILE}" \
+        --output text \
+        --query Plaintext \
+         |base64 \
+        --decode > "${PLAINTEXT_FILE}"
+}
+
+function encrypt_kms {
+    KMS_KEY_ID="${1:-}"
+    PLAINTEXT_FILE="${2:-}"
+    ENCRYPTED_FILE="${3:-}"
+    aws kms encrypt \
+        --key-id "${KMS_KEY_ID}" \
+        --region "${AWS_REGION}" \
+        --plaintext fileb://"${PLAINTEXT_FILE}" \
+        --output text \
+        --query CiphertextBlob | base64 \
+        --decode > "${ENCRYPTED_FILE}"
+}
+
 function authenticate_to_ecr {
 
-    AWS_ACCOUNT_ID="${1}"
-    REGION="${2}"
+    AWS_ACCOUNT_ID="${1:-}"
+    REGION="${2:-}"
 
     if exists docker ; then
         echo "docker found in PATH."
@@ -24,12 +50,9 @@ function authenticate_to_ecr {
         exit 1
     fi
     echo "Authenticating to ECR"
-    if [[ -n "${AWS_ACCESS_KEY_ID:-}" ]] && [[ -n "${AWS_SECRET_ACCESS_KEY:-}" ]] && [[ -n "${AWS_SESSION_TOKEN:-}" ]]; then 
-        eval $(docker run --network=host -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN --rm xueshanf/awscli aws ecr get-login --no-include-email --registry-ids $AWS_ACCOUNT_ID --region $AWS_REGION)
-    else
-        eval $(docker run --network=host --rm xueshanf/awscli aws ecr get-login --no-include-email --registry-ids $AWS_ACCOUNT_ID --region $AWS_REGION)
-    fi
+    eval "$(docker run --network=host -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN --rm xueshanf/awscli aws ecr get-login --no-include-email --registry-ids "${AWS_ACCOUNT_ID}" --region "${REGION}")"
 }
+
 
 
 if [[ -n "${ENVIRONMENT:-}" ]]; then
@@ -78,10 +101,4 @@ echo "Getting the kubectl credentials"
 
 aws eks --region "${AWS_REGION}" update-kubeconfig --name "${SERVICE_CLUSTER}"
 
-export HELM_DEPLOYMENT=$(helm ls | grep "${CHART_NAME}" | wc -l)
-
-if [[ "${HELM_DEPLOYMENT}"  -eq 0 ]]; then
-    helm install --name "${CHART_NAME}" --namespace="${CHART_NAMESPACE:-default}" --set buildNumber="${BUILDKITE_BUILD_NUMBER:-latest}" . -f "${VALUES_FILE}" --debug
-else
-    helm upgrade "${CHART_NAME}" --namespace="${CHART_NAMESPACE:-default}" --set buildNumber="${BUILDKITE_BUILD_NUMBER:-latest}" . -f "${VALUES_FILE}" --debug
-fi
+helm upgrade --install --force --wait "${CHART_NAME}" --namespace="${CHART_NAMESPACE}" --set buildNumber="${BUILDKITE_BUILD_NUMBER:-latest}" . -f "${VALUES_FILE}" --debug

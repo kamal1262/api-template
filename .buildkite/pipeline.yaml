@@ -9,7 +9,7 @@ steps:
       aws:account-id: 'awscloud.data-engineering.development'
     branches: "master"
 
-  - block: "Deploy to DEV :kubernetes: Cluster!!!"
+  - wait
 
   - label: "Deploy to :kubernetes: Dev "
     command: "auto/deploy"
@@ -20,6 +20,8 @@ steps:
       aws:account-id: 'awscloud.data-engineering.development'
     branches: "master"
 
+  - block: "Deploy to STAGING :kubernetes: Cluster!!!"
+
   - label: "Build Staging :docker: image"
     command: "auto/build"
     env:
@@ -29,7 +31,7 @@ steps:
       aws:account-id: 'awscloud.data-engineering.staging'
     branches: "master"
 
-  - block: "Deploy to STAGING :kubernetes: Cluster!!!"
+  - wait
 
   - label: "Deploy to :kubernetes: Staging "
     command: "auto/deploy"
@@ -40,6 +42,8 @@ steps:
       aws:account-id: 'awscloud.data-engineering.staging'
     branches: "master"
 
+  - block: "Deploy to Production :kubernetes: Cluster!!!"
+
   - label: "Build Production :docker: image"
     command: "auto/build"
     env:
@@ -49,7 +53,7 @@ steps:
       aws:account-id: 'awscloud.data-engineering.production'
     branches: "master"
 
-  - block: "Deploy to Production :kubernetes: Cluster!!!"
+  - wait
 
   - label: "Deploy to :kubernetes: Staging "
     command: "auto/deploy"
