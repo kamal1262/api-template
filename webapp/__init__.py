@@ -11,6 +11,7 @@ from flask_sqlalchemy import SQLAlchemy
 from .messagequeue.consumer import InMemoryConsumer, SQSConsumer  # noqa: F401
 from .messagequeue.producer import InMemoryProducer, SQSProducer  # noqa: F401
 from .messagequeue.sample_consumer import SampleConsumer  # noqa: F401
+from diagnostics_endpoint import Diagnostics
 
 db = (
     XRayFlaskSqlAlchemy(engine_options={"pool_pre_ping": True})
@@ -27,6 +28,12 @@ db = (
         }
     )
 )
+
+application_endpoints = [
+    {"name": "API Template", "endpoint": "/heartbeat"}
+]
+
+
 migrate = Migrate()
 
 
@@ -39,6 +46,8 @@ def create_app(object_name):
                      e.g. project.config.ProdConfig
     """
     app = Flask(__name__)
+
+
     app.config.from_object(object_name)
 
     db.init_app(app)
@@ -68,7 +77,7 @@ def create_app(object_name):
     error_create_module(rest_api, app=app)
 
     rest_api.init_app(app)
-
+    Diagnostics.render(app, application_endpoints)
     xray_recorder.configure(
         service=app.config["APP_TITLE"],
         daemon_address=app.config["XRAY"]["daemon_url"],
@@ -90,9 +99,9 @@ def create_app(object_name):
 
     XRayMiddleware(app, xray_recorder)
 
-    @app.teardown_request
-    def teardown_request():
-        db.session.remove()
+    #@app.teardown_request
+    #def teardown_request():
+        #db.session.remove()
     return app
 
 
