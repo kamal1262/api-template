@@ -29,9 +29,7 @@ db = (
     )
 )
 
-application_endpoints = [
-    {"name": "API Template", "endpoint": "/heartbeat"}
-]
+application_endpoints = [{"name": "API Template", "endpoint": "/heartbeat"}]
 
 
 migrate = Migrate()
@@ -46,7 +44,6 @@ def create_app(object_name):
                      e.g. project.config.ProdConfig
     """
     app = Flask(__name__)
-
 
     app.config.from_object(object_name)
 
@@ -99,9 +96,10 @@ def create_app(object_name):
 
     XRayMiddleware(app, xray_recorder)
 
-    #@app.teardown_request
-    #def teardown_request():
-        #db.session.remove()
+    @app.teardown_request
+    def teardown_request(res_or_exec):
+        db.session.remove()
+
     return app
 
 
