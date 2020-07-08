@@ -1,4 +1,6 @@
-# To use this project
+# API Template [![Build status](https://badge.buildkite.com/fcf0099ac96f18da2729ebcafe9ec525c471b84ce7ac969873.svg)](https://buildkite.com/rea/api-template)
+
+## To use this project
 Click on the `Use this template` button, follow the instruction to create a new project.
 ![Use this template button](docs/images/use-this-template.png?raw=true "Use this template")
 
