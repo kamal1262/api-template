@@ -47,7 +47,7 @@ ingress:
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
     alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-southeast-1:958356994665:certificate/36fc3a04-5b1a-443d-9a46-b75d720c8b79
-    alb.ingress.kubernetes.io/healthcheck-path: /healthcheck
+    alb.ingress.kubernetes.io/healthcheck-path: /heartbeat
     alb.ingress.kubernetes.io/success-codes: 200-301
     alb.ingress.kubernetes.io/unhealthy-threshold-count: '8'
     alb.ingress.kubernetes.io/subnets: subnet-0c4b92aa900565191,subnet-06b355f2e684f7d43,subnet-05f7e185b5eb3fa38
