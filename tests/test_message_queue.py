@@ -6,6 +6,7 @@ from flask.testing import FlaskClient
 from webapp import create_app  # noqa: E402
 
 
+@unittest.skip("API does not necessary to have MessageQueue")
 class MessageQueueTests(unittest.TestCase):
     # executed prior to each test
     def setUp(self):
