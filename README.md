@@ -69,7 +69,7 @@ DATABASE_URI=mysql+pymysql://dbuser:password@127.0.0.1:3306/commonsDB
 ```
 
 ### Loading data into database
-Then run the migration process to create the database structure needed by the application
+Run the migration process to create the database structure needed by the application
 ```bash
 flask db upgrade
 ```
