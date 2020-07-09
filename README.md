@@ -121,6 +121,16 @@ get the logger from arguments and use it in the code. The configuration file con
 Currently logging will stream to console output instead of file.
 
 
+## Healthcheck API
+We are using [python diagnostics-endpoint](https://github.com/shardulsrivastava/python-diagnostics) 
+library to do the healthcheck and provide the diagnotic endpoint. To access the healthcheck, 
+go to http://localhost:5000/heartbeat. As for diagnostic-endpoint, go to http://localhost:5000/diagnotics 
+to check on the dependencies of this API.
+
+### Diagnostics Endpoint
+![Diagnostics Endpoint](docs/images/diagnostics-endpoint.png?raw=true "Diagnostics Endpoint")
+
+
 ## API Documentation
 We are using Swagger UI to document the API, refer to `webapp/user/controllers.py` on how we can 
 document our API. To access the Swagger UI, go to http://localhost:5000/apidocs/ after you started the
