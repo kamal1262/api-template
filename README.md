@@ -40,17 +40,36 @@ Create `.env` file from `example.env`
 cp example.env .env
 ```
 
+#### Local database setup
 Setup a MySQL database, if you have Docker, run the following command to create the database container
 ```shell
-docker run --name mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=cms -p 3306:3306 -d mysql:5
+docker run --name mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=commonsDB -p 3306:3306 -d mysql:5
 ```
 
 Then in `.env`, update the `DATABASE_URI` value to
 ```..env
-DATABASE_URI=mysql+pymysql://root:password@localhost:3306/cms
+DATABASE_URI=mysql+pymysql://root:password@localhost:3306/commonsDB
 ```
 
-Then run the migration process to create the database structure needed by the application
+#### Using AWS dev database
+Add to your `~/.ssh/config` file with below script. If you don't have private key `aws-account-bastioninstance.pem` file, please request from ops channel.
+```
+Host engineering.dev
+    HostName 52.77.243.251
+    IdentityFile <Path to .pem file>
+    LocalForward 3306 commons-db-dev-auroracluster-1om7npo4s577o.cluster-ro-csypt18aokzy.ap-southeast-1.rds.amazonaws.com:3306
+    RequestTTY no
+    User ec2-user
+```
+
+Then in `terminal`, run `ssh engineering.dev` to connect to the instance through ssh.
+Now you can connect to the database through `127.0.0.1` and inside `.env`, update the `DATABASE_URI` value to
+```..env
+DATABASE_URI=mysql+pymysql://dbuser:password@127.0.0.1:3306/commonsDB
+```
+
+#### Loading data into database
+Run the migration process to create the database structure needed by the application
 ```bash
 flask db upgrade
 ```
@@ -100,6 +119,16 @@ get the logger from arguments and use it in the code. The configuration file con
 
 
 Currently logging will stream to console output instead of file.
+
+
+## Healthcheck API
+We are using [python diagnostics-endpoint](https://github.com/shardulsrivastava/python-diagnostics) 
+library to do the healthcheck and provide the diagnotic endpoint. To access the healthcheck, 
+go to http://localhost:5000/heartbeat. As for diagnostic-endpoint, go to http://localhost:5000/diagnotics 
+to check on the dependencies of this API.
+
+### Diagnostics Endpoint
+![Diagnostics Endpoint](docs/images/diagnostics-endpoint.png?raw=true "Diagnostics Endpoint")
 
 
 ## API Documentation
