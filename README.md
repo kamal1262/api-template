@@ -51,7 +51,7 @@ Then in `.env`, update the `DATABASE_URI` value to
 DATABASE_URI=mysql+pymysql://root:password@localhost:3306/commonsDB
 ```
 
-### Using AWS dev database
+#### Using AWS dev database
 Add to your `~/.ssh/config` file with below script. If you don't have private key `aws-account-bastioninstance.pem` file, please request from ops channel.
 ```
 Host engineering.dev
@@ -68,7 +68,7 @@ Now you can connect to the database through `127.0.0.1` and inside `.env`, updat
 DATABASE_URI=mysql+pymysql://dbuser:password@127.0.0.1:3306/commonsDB
 ```
 
-### Loading data into database
+#### Loading data into database
 Run the migration process to create the database structure needed by the application
 ```bash
 flask db upgrade
