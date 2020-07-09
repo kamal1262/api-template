@@ -40,7 +40,7 @@ Create `.env` file from `example.env`
 cp example.env .env
 ```
 
-### Local database setup
+#### Local database setup
 Setup a MySQL database, if you have Docker, run the following command to create the database container
 ```shell
 docker run --name mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=commonsDB -p 3306:3306 -d mysql:5
