@@ -22,15 +22,20 @@ spec:
   {{- end }}
 {{- end }}
   rules:
-    - host: {{ .Values.ingress.hosts.host }}
-      http:
-        paths:
-          - path: /*
-            backend:
-              serviceName: ssl-redirect
-              servicePort: use-annotation
-          - path: {{ .Values.ingress.hosts.paths }}
-            backend:
-              serviceName: {{ .Chart.Name }}-service
-              servicePort: {{ .Values.ingress.hosts.port }}
+{{- range $k, $v := .Values.ingress.hosts }}
+  - host: {{ $v.host }}
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: ssl-redirect
+          servicePort: use-annotation
+      {{- range $c, $d := $v.paths }}
+      - path: {{ $d.path }}
+        backend:
+          serviceName: {{ $d.serviceName }}
+          servicePort: {{ $d.servicePort }}
+      {{- end }}
 {{- end }}
+{{- end }}
+

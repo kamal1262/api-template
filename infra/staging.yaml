@@ -1,13 +1,26 @@
-# Default values for infra.
-
 replicaCount: 1
+
+#role: 
+  #name: api-template
+  #rules:
+  #- apiGroups:
+    #- batch
+    #resources:
+    #- jobs
+    #verbs:
+    #- create
+    #- get
+    #- list
+
+serviceAccount:
+  create: false
+  #name: api-template
 
 department: data-engineering
 image:
   repository: 958356994665.dkr.ecr.ap-southeast-1.amazonaws.com/api-template
   tag: latest
   pullPolicy: Always
-#serviceAccountName: reporting-sa
 container:
   port: 8000
   healthCheckUrl: /heartbeat
@@ -79,12 +92,19 @@ tolerations: []
 
 affinity: {}
 
-#secrets:
-  #name: cloud-sql-credentials
-  #data:
-    #password: eHhyRHFFSUsxMDN3eHRQdQ==
-#configMap:
-  #name: index-page-configmap
-  #data:
-    #welcome_text: kubernetes
-    #cloud_sql_uri: mysql://root@10.114.193.5:3306/mysql
+secrets:
+- name: api-template-credentials
+  data:
+    database_password: Ymd1a2VlSHJKcjI0ZXpzckxXS3o= #base64 encoded
+    jwt_secret_key: U2VDcmVUS2V5 #base64 encoded
+
+#secretFiles:
+  #- name: location-cms-environment
+    #data:
+      #- name: .env
+        #path : secrets/.env
+
+configMap:
+  name: api-template-configmap
+  data:
+    database_uri: mysql+pymysql://dbadmin:bgukeeHrJr24ezsrLWKz@ca2zergwylextf.csypt18aokzy.ap-southeast-1.rds.amazonaws.com:3306/commonsDB?connect_timeout=60

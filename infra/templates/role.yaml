@@ -1,0 +1,12 @@
+{{- if .Values.role }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Values.role.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Chart.Name }}
+    department: {{ .Values.department }}
+    app.kubernetes.io/name: {{ .Values.role.name }}
+rules: {{- toYaml .Values.role.rules | nindent 1 }}
+{{- end  }}

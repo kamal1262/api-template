@@ -1,0 +1,19 @@
+{{- if .Values.hpa }}
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Chart.Name }}-hpa
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Chart.Name }}
+    department: {{ .Values.department }}
+    app.kubernetes.io/name: {{ .Chart.Name }}-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Chart.Name }}-deployment
+  minReplicas: {{ .Values.hpa.minReplicas }}
+  maxReplicas: {{ .Values.hpa.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ .Values.hpa.targetCPUUtilization }}
+{{- end  }}

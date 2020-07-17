@@ -5,6 +5,8 @@ metadata:
   labels:
     app: {{ .Chart.Name }}
     department: {{ .Values.department }}
+    app.kubernetes.io/name: {{ .Chart.Name }}-deployment
+  namespace: {{ .Release.Namespace }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -17,11 +19,13 @@ spec:
         app: {{ .Chart.Name }}
         department: {{ .Values.department }}
     spec:
+      {{- if .Values.serviceAccount }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      {{- end  }}
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      serviceAccountName: {{ .Values.serviceAccountName }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.buildNumber }}"
@@ -40,6 +44,23 @@ spec:
               port: {{ .Values.container.port }}
           resources:
             {{- toYaml .Values.container.resources | nindent 12 }}
+          {{ if .Values.volumeMounts }}
+          volumeMounts:
+          {{- range .Values.volumeMounts }}
+          - name: {{ .name }}
+            mountPath: {{ .mountPath }}
+            subPath: {{ .subPath }}
+          {{- end }}
+          {{- end }}
+      {{ if .Values.volumes }}
+      volumes:
+      {{- range .Values.volumes }}
+      - name: {{ .name }}
+        secret:
+          secretName: {{ .name }}
+          defaultMode: {{ .defaultMode }}
+      {{- end }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

@@ -85,7 +85,7 @@ def create_app(object_name):
                     "description": "Healthcheck",
                     "host": "*",
                     "http_method": "GET",
-                    "url_path": "/healthcheck*",
+                    "url_path": "/heartbeat*",
                     "fixed_target": 0,
                     "rate": 0.0,
                 }

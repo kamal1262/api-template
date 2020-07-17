@@ -25,7 +25,7 @@ function create_ecr_repo {
         "aws ecr describe-repositories --repository-names ${REPO_NAME} --region ${REGION} || aws ecr create-repository --repository-name ${REPO_NAME} --region ${REGION}"
 }
 
-function authenticate_to_ecr {
+function authenticate_to_ecr() {
 
     AWS_ACCOUNT_ID="${1:-}"
     REGION="${2:-}"
@@ -37,7 +37,7 @@ function authenticate_to_ecr {
         exit 1
     fi
     echo "Authenticating to ECR"
-    eval "$(docker run --network=host -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN --rm xueshanf/awscli aws ecr get-login --no-include-email --registry-ids "${AWS_ACCOUNT_ID}" --region "${REGION}")"
+    eval "$(docker run --rm --network=host -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN --rm xueshanf/awscli aws ecr get-login --no-include-email --registry-ids "${AWS_ACCOUNT_ID}" --region "${REGION}")"
 }
 
 
