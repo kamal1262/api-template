@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+export AWS_REGION="${AWS_REGION:=ap-southeast-1}"
+export PLAINTEXT_FILE="auto/common"
+
+function green() {
+    text="${1:- }"
+    echo -e "\\033[32m $text \\033[0m"
+}
+
+function yellow() {
+    text="${1:- }"
+    echo -e "\\033[33m $text \\033[0m"
+}
+
+function decorate() {
+    text1="${1:- }"
+    text2="${2:- }"
+    echo -e "\\033[32m $text1 \\033[0m\\033[33m$text2 \\033[0m"
+}
+
+function decrypt {
+    ENCRYPTED_FILE="${1:-}"
+    PLAINTEXT_FILE="${2:-}"
+    aws kms decrypt \
+        --region "${AWS_REGION}" \
+        --ciphertext-blob fileb://"${ENCRYPTED_FILE}" \
+        --output text \
+        --query Plaintext \
+         |base64 \
+        --decode > "${PLAINTEXT_FILE}"
+}
+
+function encrypt {
+    KMS_KEY_ID="${1:-}"
+    PLAINTEXT_FILE="${2:-}"
+    ENCRYPTED_TEXT_FILE="${3:-}"
+    aws kms encrypt \
+        --region "${AWS_REGION}" \
+        --key-id "${KMS_KEY_ID}" \
+        --plaintext file://"${PLAINTEXT_FILE}" \
+        --output text \
+        --query CiphertextBlob | base64 \
+        --decode > "${ENCRYPTED_TEXT_FILE}"
+}
+
+
+function display_usage() {  
+    echo -e "\nUsage:\nENVIRONMENT=[dev/staging/prod] $0 [encrypt/decrypt] \n\nExample:\nENVIRONMENT=dev ./auto/kms decrypt\n"
+}
+
+
+if [[  $# -lt 1 ]];then 
+    display_usage
+    exit 1
+fi 
+
+if [[ ( $@ == "--help") ||  $@ == "-h" ]]; then
+    display_usage
+    exit 0
+fi 
+
+if [[ -n "${ENVIRONMENT:-}" ]]; then
+    green "Environment is ${ENVIRONMENT}"
+    if [[ "${ENVIRONMENT}" = "dev" ]]; then
+
+        export KMS_KEY_ID="525cc19a-50a8-4b09-a989-0fa854a5cf49"
+        export CREDENTIALS_FILE="infra/secrets/creds.enc.dev"
+
+    elif [[ "${ENVIRONMENT}" = "staging" ]]; then
+
+        export KMS_KEY_ID="bbb1b7f3-f894-4582-a880-59143e78e803"
+        export CREDENTIALS_FILE="infra/secrets/creds.enc.staging"
+
+    elif [[ "${ENVIRONMENT}" = "prod" ]]; then
+
+        export KMS_KEY_ID="570a1977-7396-46a6-9b1d-92f6e2005626"
+        export CREDENTIALS_FILE="infra/secrets/creds.enc.prod"
+
+    else
+        echo "Unsupported ENVIRONMENT Value, Exiting!!!"
+        exit 1
+    fi
+else
+    display_usage
+    exit 1
+fi
+
+ACTION="${1:-}"
+
+if [[ -n "${ACTION}" ]]; then
+    if [[ "${ACTION}" = "encrypt" ]]; then
+
+        decorate "Encrypting Credentials from file =>" "${PLAINTEXT_FILE}"
+        encrypt "${KMS_KEY_ID}" "${PLAINTEXT_FILE}" "${CREDENTIALS_FILE}"
+
+    elif [[ "${ACTION}" = "decrypt" ]]; then
+
+        decorate "Decrypting Credentials from file => " "${CREDENTIALS_FILE}"
+        decrypt "${CREDENTIALS_FILE}" "${PLAINTEXT_FILE}"
+
+    else
+        echo "Unsupported action , Supported Vales are => encrypt, decrypt"
+    fi
+else
+    display_usage
+    exit 1
+fi

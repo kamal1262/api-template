@@ -137,3 +137,6 @@ dmypy.json
 
 # Boto config
 .boto
+
+# credential file
+auto/common
