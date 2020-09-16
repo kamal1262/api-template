@@ -1,0 +1,74 @@
+version: 1
+update_configs:
+  # Keep package.json (& lockfiles) up to date as soon as
+  # new versions are published to the npm registry
+  # @required support package values: javascript ruby:bundler php:composer python go:modules go:dep java:maven java:gradle dotnet:nuget rust:cargo elixir:hex docker terraform submodules elm
+  - package_manager: "javascript"
+    directory: "/"
+    # @required support values: live daily weekly monthly 
+    update_schedule: "live"
+    # Limit which updates are allowed.
+    allowed_updates:
+      # only update security issues
+      - match:
+          update_type: "security"
+      # Update all out-dated package, including sub package.
+      - match:
+          update_type: "all"
+      # Update dependency by name. Support dependency_name only in rea-dependabot
+      - match:
+          dependency_name: "lodash"
+      # Wildcards match unlimited arbitrary characters (or none)
+      - match:
+          dependency_name: "react*"
+      # Only update direct dependency
+      - match:
+          dependency_name: "react"
+          dependency_type: "direct"
+    # set your specific branch here. By default your repository's default branch is used.
+    target_branch: "feature"
+    # Assignees to set on update pull requests.
+    default_assignees:
+      - "github_username1"
+      - "github_username2"
+    # Apply default reviewer and label to created
+    # pull requests
+    default_reviewers:
+      - "github-username"
+    default_labels:
+      - "label-name"
+    # By default no updates are ignored.
+    # Note: the For Java dependencies the dependency_name attribute should be prefixed with the groupId and artifactId of the dependency, joined by a : (for example: org.kohsuke:github-api).
+    ignored_updates:
+      - match:
+          dependency_name: "express"
+          # The version_requirement specifies the versions to ignore.
+          # The range format is specific to the package manager
+          # (e.g., ^1.0.0 for JS, or ~> 2.0 for Ruby).
+          version_requirement: ">=4.x"
+
+    # By default no updates are automerged. Automerged updates must be enabled at the account level
+    automerged_updates:
+      - match:
+          dependency_type: "development"
+          # Supported dependency types:
+          # - "development"
+          # - "production"
+          # - "all"
+          update_type: "all"
+          # Supported updates to automerge:
+          # - "security:patch"
+          #   SemVer patch update that fixes a known security vulnerability
+          # - "semver:patch"
+          #   SemVer patch update, e.g. > 1.x && 1.0.1 to 1.0.3
+          # - "semver:minor"
+          #   SemVer minor update, e.g. > 1.x && 2.1.4 to 2.3.1
+          # - "in_range"
+          #   matching the version requirement in your package manifest
+          # - "all"
+      - match:
+          dependency_type: "production"
+          update_type: "semver:patch"
+      - match:
+          dependency_name: "puma"
+          update_type: "semver:minor"
