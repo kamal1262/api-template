@@ -23,7 +23,7 @@ future==0.18.2
 identify==1.5.2
 importlib-metadata==0.19
 itsdangerous==1.1.0
-Jinja2==2.10.1
+Jinja2==2.11.2
 jmespath==0.9.4
 jsonpickle==1.2
 jsonschema==3.0.1
