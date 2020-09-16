@@ -6,8 +6,3 @@ update_configs:
     automerged_updates:
       - match:
           update_type: "semver:minor"
-
-  # Keep Dockerfile up to date, batching pull requests weekly
-  - package_manager: "docker"
-    directory: "/"
-    update_schedule: "weekly"
