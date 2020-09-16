@@ -24,7 +24,7 @@ identify==1.5.2
 importlib-metadata==0.19
 itsdangerous==1.1.0
 Jinja2==2.11.2
-jmespath==0.9.4
+jmespath==0.10.0
 jsonpickle==1.2
 jsonschema==3.0.1
 Mako==1.0.14
