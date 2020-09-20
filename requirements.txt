@@ -38,7 +38,7 @@ packaging==19.1
 pip-autoremove==0.9.1
 pluggy==0.13.1
 pre-commit==1.18.2
-py==1.8.0
+py==1.9.0
 PyMySQL==0.9.3
 pyparsing==2.4.2
 pyrsistent==0.15.4
