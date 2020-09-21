@@ -1,4 +1,4 @@
-alembic==1.0.11
+alembic==1.4.3
 aniso8601==7.0.0
 apispec==2.0.2
 aspy.yaml==1.3.0
