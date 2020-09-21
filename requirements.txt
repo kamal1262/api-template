@@ -26,7 +26,7 @@ itsdangerous==1.1.0
 Jinja2==2.11.2
 jmespath==0.10.0
 jsonpickle==1.4.1
-jsonschema==3.0.1
+jsonschema==3.2.0
 Mako==1.0.14
 MarkupSafe==1.1.1
 marshmallow==2.19.5
