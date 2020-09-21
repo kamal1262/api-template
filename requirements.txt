@@ -57,6 +57,6 @@ urllib3==1.25.10
 virtualenv==16.7.3
 wcwidth==0.2.5
 Werkzeug==0.15.5
-wrapt==1.11.2
+wrapt==1.12.1
 zipp==0.5.2
 diagnostics-endpoint==0.0.8
