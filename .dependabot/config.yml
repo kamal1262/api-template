@@ -2,14 +2,14 @@ version: 1
 update_configs:
   - package_manager: "python"
     directory: "/"
-    update_schedule: "weekly"
+    update_schedule: "daily"
     automerged_updates:
       - match:
           update_type: "semver:minor"
 
-  - package_manager: "docker"
-    directory: "/"
-    update_schedule: "weekly"
-    automerged_updates:
-      - match:
-          update_type: "semver:minor"
+  # - package_manager: "docker"
+  #   directory: "/"
+  #   update_schedule: "weekly"
+  #   automerged_updates:
+  #     - match:
+  #         update_type: "semver:minor"
