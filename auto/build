@@ -17,12 +17,7 @@ function create_ecr_repo {
 
     export REPO_NAME="${1:-}"
     export REGION="${2:-}"
-    docker run --rm --network=host \
-        -e AWS_ACCESS_KEY_ID \
-        -e AWS_SECRET_ACCESS_KEY \
-        -e AWS_SESSION_TOKEN \
-        xueshanf/awscli /bin/bash -c \
-        "aws ecr describe-repositories --repository-names ${REPO_NAME} --region ${REGION} || aws ecr create-repository --repository-name ${REPO_NAME} --region ${REGION}"
+    aws ecr describe-repositories --repository-names "${REPO_NAME}" --region "${REGION}" || aws ecr create-repository --repository-name "${REPO_NAME}" --region "${REGION}"
 }
 
 function authenticate_to_ecr() {
