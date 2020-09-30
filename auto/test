@@ -9,4 +9,4 @@ docker run --rm -w /source \
 python:3.7-slim-buster \
 sh -c "pip install -r requirements.txt \
 && pip install -U pytest coverage \
-&& coverage run -m pytest tests && coverage xml"
+&& coverage run -m pytest tests --junitxml=py-test-report.xml && coverage xml"
