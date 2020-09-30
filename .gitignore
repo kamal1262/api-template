@@ -140,3 +140,6 @@ dmypy.json
 
 # credential file
 auto/common
+
+# sonar file
+.scannerwork
