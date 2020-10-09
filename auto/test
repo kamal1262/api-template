@@ -4,6 +4,9 @@ set -euxo pipefail
 
 cd "$(dirname $0)/.."
 
-pip install -r requirements.txt &&
-    pip install -U pytest coverage &&
-    coverage run -m pytest tests --junitxml=py-test-report.xml && coverage xml
+docker run --rm -w /source \
+    -v "$(pwd)":/source \
+    python:3.7-slim-buster \
+    sh -c "pip install -r requirements.txt \
+&& pip install -U pytest coverage \
+&& coverage run -m pytest tests --junitxml=py-test-report.xml && coverage xml"
