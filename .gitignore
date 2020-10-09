@@ -50,6 +50,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 py-test-report.xml
+pylint-report.json
 
 # Translations
 *.mo
