@@ -45,10 +45,10 @@ class UserModuleTests(unittest.TestCase):
             assert data["email"] == self.test_user_1.email
             assert data["id"] == self.test_user_1.id
 
-    # def test_get_non_existent_user(self):
-    #     with self.client as c:
-    #         request = c.get("/api/users/5000")
-    #         assert request.status_code == 404
+    def test_get_non_existent_user(self):
+        with self.client as c:
+            request = c.get("/api/users/5000")
+            assert request.status_code == 404
 
     def test_list_users(self):
         with self.client as c:
