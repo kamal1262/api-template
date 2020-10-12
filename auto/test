@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
 
-set -euxo pipefail
+set -euo pipefail
 
-cd "$(dirname $0)/.."
+cd "$(dirname "$0")/.."
 
-pip install -r requirements.txt &&
-    pip install -U pytest coverage &&
-    coverage run -m pytest tests --junitxml=py-test-report.xml && coverage xml
+function green() {
+    text="${1:- }"
+    echo -e "--- \033[32m$text\033[0m"
+}
+
+python3 -m pip install -r requirements.txt &&
+    python3 -m pip install -U pytest coverage pylint &&
+    python3 -m coverage run -m pytest tests --junitxml=py-test-report.xml &&
+    coverage xml -i &&
+    python3 -m pylint '**/*.py' --reports=n --output-format=parseable --exit-zero >>pylint-report.parseable &&
+    green "All tests passed"
