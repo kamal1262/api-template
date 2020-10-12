@@ -1,4 +1,13 @@
 steps:
+  - label: "Running tests"
+    command: "auto/test"
+    agents:
+      queue: 'eks-dataservices-agent:ci'
+      aws:account-id: 'awscloud.data-engineering.development'
+    artifact_paths:
+      - "coverage.xml"
+      - "py-test-report.xml"
+      - "pylint-report.parseable"
 
   - label: "Build Dev :docker: image"
     command: "auto/build"
