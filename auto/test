@@ -9,9 +9,15 @@ function green() {
     echo -e "--- \033[32m$text\033[0m"
 }
 
+function blue() {
+    text="${1:- }"
+    echo -e "\033[96m$text\033[0m"
+}
+
+green "Running tests"
 python3 -m pip install -r requirements.txt &&
     python3 -m pip install -U pytest coverage pylint &&
     python3 -m coverage run -m pytest tests --junitxml=py-test-report.xml &&
     coverage xml -i &&
     python3 -m pylint '**/*.py' --reports=n --output-format=parseable --exit-zero >>pylint-report.parseable &&
-    green "All tests passed"
+    blue "All tests passed"
