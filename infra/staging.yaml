@@ -65,9 +65,11 @@ ingress:
     alb.ingress.kubernetes.io/unhealthy-threshold-count: '8'
     alb.ingress.kubernetes.io/subnets: subnet-0c4b92aa900565191,subnet-06b355f2e684f7d43,subnet-05f7e185b5eb3fa38
   hosts:
-    host: test.stg.data.rea-asia.com
-    paths: /*
-    port: 80
+  - host: test.stg.data.rea-asia.com
+    paths:
+    - path: /*
+      servicePort: 80
+      serviceName: api-template-service
 
   tls: []
   #  - secretName: chart-example-tls
