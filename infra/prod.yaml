@@ -64,9 +64,11 @@ ingress:
     alb.ingress.kubernetes.io/success-codes: 200-301
     alb.ingress.kubernetes.io/unhealthy-threshold-count: '8'
   hosts:
-    host: test.data.rea-asia.com
-    paths: /*
-    port: 80
+  - host: test.data.rea-asia.com
+    paths:
+    - path: /*
+      servicePort: 80
+      serviceName: api-template-service
 
   tls: []
   #  - secretName: chart-example-tls
