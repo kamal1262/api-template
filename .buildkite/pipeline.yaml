@@ -1,5 +1,5 @@
 steps:
-  - label: "Running tests in development environment"
+  - label: "Running tests and lint in development environment"
     command: "auto/test"
     env:
       ENVIRONMENT: "DEV"
@@ -36,7 +36,7 @@ steps:
   - block: "Deploy to STAGING :kubernetes: Cluster!!!"
     branches: "master"
 
-  - label: "Running tests in staging environment"
+  - label: "Running tests and lint in staging environment"
     command: "auto/test"
     env:
       ENVIRONMENT: "STAGING"
@@ -70,7 +70,7 @@ steps:
   - block: "Deploy to Production :kubernetes: Cluster!!!"
     branches: "master"
 
-  - label: "Running tests in production environment"
+  - label: "Running tests and lint in production environment"
     command: "auto/test"
     env:
       ENVIRONMENT: "PROD"
