@@ -19,7 +19,7 @@ def create_module(api, **kwargs):
         return {"message": str(e)}, 404
 
     @api.errorhandler(HTTPException)
-    @api.errorhandler(Exception)
+    @app.errorhandler(Exception)
     def handle_http_exception(e):
         logger.error(e, exc_info=True)
         _log_to_segment(e, e.code)
