@@ -1,6 +1,8 @@
 steps:
-  - label: "Running tests"
+  - label: "Running tests in development environment"
     command: "auto/test"
+    env:
+      ENVIRONMENT: "DEV"
     agents:
       queue: 'eks-dataservices-agent:ci'
       aws:account-id: 'awscloud.data-engineering.development'
@@ -8,6 +10,8 @@ steps:
       - "coverage.xml"
       - "py-test-report.xml"
       - "pylint-report.parseable"
+  
+  - wait
 
   - label: "Build Dev :docker: image"
     command: "auto/build"
@@ -31,6 +35,17 @@ steps:
 
   - block: "Deploy to STAGING :kubernetes: Cluster!!!"
 
+  - label: "Running tests in staging environment"
+    command: "auto/test"
+    env:
+      ENVIRONMENT: "STAGING"
+    agents:
+      queue: 'eks-dataservices-agent:ci'
+      aws:account-id: 'awscloud.data-engineering.staging'
+    branches: "master"
+
+  - wait
+
   - label: "Build Staging :docker: image"
     command: "auto/build"
     env:
@@ -52,6 +67,17 @@ steps:
     branches: "master"
 
   - block: "Deploy to Production :kubernetes: Cluster!!!"
+
+  - label: "Running tests in production environment"
+    command: "auto/test"
+    env:
+      ENVIRONMENT: "PROD"
+    agents:
+      queue: 'eks-dataservices-agent:ci'
+      aws:account-id: 'awscloud.data-engineering.production'
+    branches: "master"
+  
+  - wait
 
   - label: "Build Production :docker: image"
     command: "auto/build"
