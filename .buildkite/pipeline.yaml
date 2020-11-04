@@ -13,6 +13,17 @@ steps:
   
   - wait
 
+  - label: "Sonar scan"
+    command: "auto/sonar"
+    agents:
+      queue: "eks-dataservices-agent:ci"
+    plugins:
+      ssh://git@git.realestate.com.au/data-service-it/sonar-buildkite-plugin#f857e7cc8344cf18fd1987230df2aba04eb40618:
+        projectKey: api-template
+        projectname: "API Template"
+
+  - wait
+
   - label: "Build Dev :docker: image"
     command: "auto/build"
     env:
