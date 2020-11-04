@@ -34,6 +34,7 @@ steps:
     branches: "master"
 
   - block: "Deploy to STAGING :kubernetes: Cluster!!!"
+    branches: "master"
 
   - label: "Running tests in staging environment"
     command: "auto/test"
@@ -67,6 +68,7 @@ steps:
     branches: "master"
 
   - block: "Deploy to Production :kubernetes: Cluster!!!"
+    branches: "master"
 
   - label: "Running tests in production environment"
     command: "auto/test"
