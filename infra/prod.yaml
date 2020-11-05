@@ -63,6 +63,7 @@ ingress:
     alb.ingress.kubernetes.io/healthcheck-path: /heartbeat
     alb.ingress.kubernetes.io/success-codes: 200-301
     alb.ingress.kubernetes.io/unhealthy-threshold-count: '8'
+    alb.ingress.kubernetes.io/subnets: subnet-00693cf715c1ecee0,subnet-016786a7e7785dd73,subnet-08b5dad53aa035f9b
   hosts:
   - host: test.data.rea-asia.com
     paths:
