@@ -123,8 +123,8 @@ Currently logging will stream to console output instead of file.
 
 ## Healthcheck API
 We are using python [diagnostics-endpoint](https://github.com/shardulsrivastava/python-diagnostics) 
-library to do the healthcheck and provide the diagnotic endpoint. To access the healthcheck, 
-go to http://localhost:5000/heartbeat. As for diagnostic-endpoint, go to http://localhost:5000/diagnotics 
+library to do the healthcheck and provide the diagnostic endpoint. To access the healthcheck, 
+go to http://localhost:5000/heartbeat. As for diagnostic-endpoint, go to http://localhost:5000/diagnostics 
 to check on the dependencies of this API.
 
 ### Diagnostics Endpoint
