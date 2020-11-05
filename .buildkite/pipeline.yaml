@@ -16,10 +16,10 @@ steps:
   - label: "Sonar scan"
     command: "auto/sonar"
     env:
-      ENVIRONMENT: "DEV"
+      ENVIRONMENT: "PROD"
     agents:
       queue: "eks-dataservices-agent:ci"
-      aws:account-id: 'awscloud.data-engineering.development'
+      aws:account-id: 'awscloud.data-engineering.production'
     plugins:
       ssh://git@git.realestate.com.au/data-service-it/sonar-buildkite-plugin#f857e7cc8344cf18fd1987230df2aba04eb40618:
         projectKey: api-template
