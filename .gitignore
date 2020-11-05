@@ -49,6 +49,8 @@ coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
+py-test-report.xml
+pylint-report.*
 
 # Translations
 *.mo
@@ -140,3 +142,6 @@ dmypy.json
 
 # credential file
 auto/common
+
+# sonar file
+.scannerwork
