@@ -21,7 +21,7 @@ steps:
       queue: "eks-dataservices-agent:ci"
       aws:account-id: 'awscloud.data-engineering.production'
     plugins:
-      ssh://git@git.realestate.com.au/data-service-it/sonar-buildkite-plugin#0cd8db462b2297d81dfa1c529776ee4ab923fc60:
+      ssh://git@git.realestate.com.au/cide/sonar-buildkite-plugin#1123555723bdb04c560693be4a5eb8728ae5be68:
         projectKey: "api-template"
         projectname: "API Template"
         coverage_exclusions: "**/tests/**"
