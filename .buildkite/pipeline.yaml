@@ -15,8 +15,6 @@ steps:
 
   - label: "Sonar scan"
     command: "auto/sonar"
-    env:
-      ENVIRONMENT: "PROD"
     agents:
       queue: "eks-dataservices-agent:ci"
       aws:account-id: 'awscloud.data-engineering.production'
