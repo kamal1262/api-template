@@ -13,13 +13,12 @@ steps:
   
   - wait
 
-  - label: "Sonar scan"
-    command: "auto/sonar"
+  - label: "Sonar scan :sonarqube:"
     agents:
       queue: "eks-dataservices-agent:ci"
       aws:account-id: 'awscloud.data-engineering.production'
     plugins:
-      ssh://git@git.realestate.com.au/cide/sonar-buildkite-plugin#1123555723bdb04c560693be4a5eb8728ae5be68:
+      ssh://git@git.realestate.com.au/cide/sonar-buildkite-plugin#c791cba0a2387ace57452c44c6b459d4fbfecf83:
         projectKey: "api-template"
         projectname: "API Template"
         coverage_exclusions: "**/tests/**"
