@@ -4,8 +4,7 @@ steps:
     env:
       ENVIRONMENT: "DEV"
     agents:
-      queue: 'eks-dataservices-agent:ci'
-      aws:account-id: 'awscloud.data-engineering.development'
+      queue: 'eks-dataservices-agent-dev'
     artifact_paths:
       - "coverage.xml"
       - "py-test-report.xml"
@@ -15,8 +14,7 @@ steps:
 
   - label: "Sonar scan :sonarqube:"
     agents:
-      queue: "eks-dataservices-agent:ci"
-      aws:account-id: 'awscloud.data-engineering.production'
+      queue: "eks-dataservices-agent-dev"
     plugins:
       ssh://git@git.realestate.com.au/cide/sonar-buildkite-plugin#7893f59e3cc5b62617ff30f85525902fd1e8024c:
         projectKey: "api-template"
@@ -30,9 +28,8 @@ steps:
     env:
       ENVIRONMENT: "DEV"
     agents:
-      queue: 'eks-dataservices-agent:ci'
-      aws:account-id: 'awscloud.data-engineering.development'
-    branches: "master"
+      queue: 'eks-dataservices-agent-dev'
+    branches: "master test-new-bk-agent"
 
   - wait
 
@@ -41,21 +38,19 @@ steps:
     env:
       ENVIRONMENT: "DEV"
     agents:
-      queue: 'eks-dataservices-agent:ci'
-      aws:account-id: 'awscloud.data-engineering.development'
-    branches: "master"
+      queue: 'eks-dataservices-agent-dev'
+    branches: "master test-new-bk-agent"
 
   - block: "Deploy to STAGING :kubernetes: Cluster!!!"
-    branches: "master"
+    branches: "master test-new-bk-agent"
 
   - label: "Running tests in staging environment"
     command: "auto/test"
     env:
       ENVIRONMENT: "STAGING"
     agents:
-      queue: 'eks-dataservices-agent:ci'
-      aws:account-id: 'awscloud.data-engineering.staging'
-    branches: "master"
+      queue: 'eks-dataservices-agent-staging'
+    branches: "master test-new-bk-agent"
 
   - wait
 
@@ -64,9 +59,8 @@ steps:
     env:
       ENVIRONMENT: "STAGING"
     agents:
-      queue: 'eks-dataservices-agent:ci'
-      aws:account-id: 'awscloud.data-engineering.staging'
-    branches: "master"
+      queue: 'eks-dataservices-agent-staging'
+    branches: "master test-new-bk-agent"
 
   - wait
 
@@ -75,21 +69,19 @@ steps:
     env:
       ENVIRONMENT: "STAGING"
     agents:
-      queue: 'eks-dataservices-agent:ci'
-      aws:account-id: 'awscloud.data-engineering.staging'
-    branches: "master"
+      queue: 'eks-dataservices-agent-staging'
+    branches: "master test-new-bk-agent"
 
   - block: "Deploy to Production :kubernetes: Cluster!!!"
-    branches: "master"
+    branches: "master test-new-bk-agent"
 
   - label: "Running tests in production environment"
     command: "auto/test"
     env:
       ENVIRONMENT: "PROD"
     agents:
-      queue: 'eks-dataservices-agent:ci'
-      aws:account-id: 'awscloud.data-engineering.production'
-    branches: "master"
+      queue: 'eks-dataservices-agent-prod'
+    branches: "master test-new-bk-agent"
   
   - wait
 
@@ -98,17 +90,15 @@ steps:
     env:
       ENVIRONMENT: "PROD"
     agents:
-      queue: 'eks-dataservices-agent:ci'
-      aws:account-id: 'awscloud.data-engineering.production'
-    branches: "master"
+      queue: 'eks-dataservices-agent-prod'
+    branches: "master test-new-bk-agent"
 
   - wait
 
-  - label: "Deploy to :kubernetes: Staging "
+  - label: "Deploy to :kubernetes: Production "
     command: "auto/deploy"
     env:
       ENVIRONMENT: "PROD"
     agents:
-      queue: 'eks-dataservices-agent:ci'
-      aws:account-id: 'awscloud.data-engineering.production'
-    branches: "master"
+      queue: 'eks-dataservices-agent-prod'
+    branches: "master test-new-bk-agent"
