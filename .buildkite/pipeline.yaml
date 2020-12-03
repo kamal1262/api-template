@@ -1,45 +1,45 @@
 steps:
-  - label: "Running tests in development environment"
-    command: "auto/test"
-    env:
-      ENVIRONMENT: "DEV"
-    agents:
-      queue: 'eks-dataservices-agent-dev'
-    artifact_paths:
-      - "coverage.xml"
-      - "py-test-report.xml"
-      - "pylint-report.parseable"
+  # - label: "Running tests in development environment"
+  #   command: "auto/test"
+  #   env:
+  #     ENVIRONMENT: "DEV"
+  #   agents:
+  #     queue: 'eks-dataservices-agent-dev'
+  #   artifact_paths:
+  #     - "coverage.xml"
+  #     - "py-test-report.xml"
+  #     - "pylint-report.parseable"
   
-  - wait
+  # - wait
 
-  - label: "Sonar scan :sonarqube:"
-    agents:
-      queue: "eks-dataservices-agent-dev"
-    plugins:
-      ssh://git@git.realestate.com.au/cide/sonar-buildkite-plugin#7893f59e3cc5b62617ff30f85525902fd1e8024c:
-        projectKey: "api-template"
-        projectname: "API Template"
-        coverage_exclusions: "**/tests/**"
+  # - label: "Sonar scan :sonarqube:"
+  #   agents:
+  #     queue: "eks-dataservices-agent-dev"
+  #   plugins:
+  #     ssh://git@git.realestate.com.au/cide/sonar-buildkite-plugin#7893f59e3cc5b62617ff30f85525902fd1e8024c:
+  #       projectKey: "api-template"
+  #       projectname: "API Template"
+  #       coverage_exclusions: "**/tests/**"
 
-  - wait
+  # - wait
 
-  - label: "Build Dev :docker: image"
-    command: "auto/build"
-    env:
-      ENVIRONMENT: "DEV"
-    agents:
-      queue: 'eks-dataservices-agent-dev'
-    branches: "master test-new-bk-agent"
+  # - label: "Build Dev :docker: image"
+  #   command: "auto/build"
+  #   env:
+  #     ENVIRONMENT: "DEV"
+  #   agents:
+  #     queue: 'eks-dataservices-agent-dev'
+  #   branches: "master test-new-bk-agent"
 
-  - wait
+  # - wait
 
-  - label: "Deploy to :kubernetes: Dev "
-    command: "auto/deploy"
-    env:
-      ENVIRONMENT: "DEV"
-    agents:
-      queue: 'eks-dataservices-agent-dev'
-    branches: "master test-new-bk-agent"
+  # - label: "Deploy to :kubernetes: Dev "
+  #   command: "auto/deploy"
+  #   env:
+  #     ENVIRONMENT: "DEV"
+  #   agents:
+  #     queue: 'eks-dataservices-agent-dev'
+  #   branches: "master test-new-bk-agent"
 
   - block: "Deploy to STAGING :kubernetes: Cluster!!!"
     branches: "master test-new-bk-agent"
