@@ -19,7 +19,7 @@ spec:
         app: {{ .Chart.Name }}
         department: {{ .Values.department }}
     spec:
-      {{- if .Values.serviceAccount }}
+      {{- if and .Values.serviceAccount.create .Values.serviceAccount.name }}
       serviceAccountName: {{ .Values.serviceAccount.name }}
       {{- end  }}
     {{- with .Values.imagePullSecrets }}

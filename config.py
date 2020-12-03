@@ -41,6 +41,10 @@ class DevelopmentConfig(Config):
     ENV = "development"
 
 
+class StagingConfig(Config):
+    ENV = "staging"
+
+
 class TestConfig(Config):
     ENV = "test"
     TESTING = True
