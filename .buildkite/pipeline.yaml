@@ -16,7 +16,7 @@ steps:
     agents:
       queue: "eks-dataservices-agent-dev"
     plugins:
-      ssh://git@git.realestate.com.au/data-service-it/sonar-buildkite-plugin#3bc7522639db9a956bf5243e66fe6a0b55edd3f5:
+      ssh://git@git.realestate.com.au/data-service-it/sonar-buildkite-plugin#00f06b0e78572c19d644467f5de94e7fa36300c4:
         projectKey: "api-template"
         projectname: "API Template"
         coverage_exclusions: "**/tests/**"
