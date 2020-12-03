@@ -21,28 +21,28 @@ steps:
         projectname: "API Template"
         coverage_exclusions: "**/tests/**"
 
-  # - wait
+  - wait
 
-  # - label: "Build Dev :docker: image"
-  #   command: "auto/build"
-  #   env:
-  #     ENVIRONMENT: "DEV"
-  #   agents:
-  #     queue: 'eks-dataservices-agent-dev'
-  #   branches: "master test-new-bk-agent"
+  - label: "Build Dev :docker: image"
+    command: "auto/build"
+    env:
+      ENVIRONMENT: "DEV"
+    agents:
+      queue: 'eks-dataservices-agent-dev'
+    branches: "master"
 
-  # - wait
+  - wait
 
-  # - label: "Deploy to :kubernetes: Dev "
-  #   command: "auto/deploy"
-  #   env:
-  #     ENVIRONMENT: "DEV"
-  #   agents:
-  #     queue: 'eks-dataservices-agent-dev'
-  #   branches: "master test-new-bk-agent"
+  - label: "Deploy to :kubernetes: Dev "
+    command: "auto/deploy"
+    env:
+      ENVIRONMENT: "DEV"
+    agents:
+      queue: 'eks-dataservices-agent-dev'
+    branches: "master"
 
   - block: "Deploy to STAGING :kubernetes: Cluster!!!"
-    branches: "master test-new-bk-agent"
+    branches: "master"
 
   - label: "Running tests in staging environment"
     command: "auto/test"
@@ -50,7 +50,7 @@ steps:
       ENVIRONMENT: "STAGING"
     agents:
       queue: 'eks-dataservices-agent-staging'
-    branches: "master test-new-bk-agent"
+    branches: "master"
 
   - wait
 
@@ -60,7 +60,7 @@ steps:
       ENVIRONMENT: "STAGING"
     agents:
       queue: 'eks-dataservices-agent-staging'
-    branches: "master test-new-bk-agent"
+    branches: "master"
 
   - wait
 
@@ -70,10 +70,10 @@ steps:
       ENVIRONMENT: "STAGING"
     agents:
       queue: 'eks-dataservices-agent-staging'
-    branches: "master test-new-bk-agent"
+    branches: "master"
 
   - block: "Deploy to Production :kubernetes: Cluster!!!"
-    branches: "master test-new-bk-agent"
+    branches: "master"
 
   - label: "Running tests in production environment"
     command: "auto/test"
@@ -81,7 +81,7 @@ steps:
       ENVIRONMENT: "PROD"
     agents:
       queue: 'eks-dataservices-agent-prod'
-    branches: "master test-new-bk-agent"
+    branches: "master"
   
   - wait
 
@@ -91,7 +91,7 @@ steps:
       ENVIRONMENT: "PROD"
     agents:
       queue: 'eks-dataservices-agent-prod'
-    branches: "master test-new-bk-agent"
+    branches: "master"
 
   - wait
 
@@ -101,4 +101,4 @@ steps:
       ENVIRONMENT: "PROD"
     agents:
       queue: 'eks-dataservices-agent-prod'
-    branches: "master test-new-bk-agent"
+    branches: "master"
