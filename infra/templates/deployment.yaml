@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Chart.Name }}-deployment
@@ -19,7 +19,7 @@ spec:
         app: {{ .Chart.Name }}
         department: {{ .Values.department }}
     spec:
-      {{- if .Values.serviceAccount }}
+      {{- if and .Values.serviceAccount.create .Values.serviceAccount.name }}
       serviceAccountName: {{ .Values.serviceAccount.name }}
       {{- end  }}
     {{- with .Values.imagePullSecrets }}
