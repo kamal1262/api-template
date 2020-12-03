@@ -31,17 +31,73 @@ container:
     limits:
       memory: 512Mi
       cpu: "1"
-  #environments:
-    #- name: WELCOME_TEXT
-      #valueFrom:
-        #configMapKeyRef:
-          #name: index-page-configmap
-          #key: welcome_text
-    #- name: CLOUD_SQL_PASSWORD
-      #valueFrom:
-        #secretKeyRef:
-          #name: cloud-sql-credentials
-          #key: password
+  environments:
+    - name: FLASK_DEBUG
+      value: "1"
+    # AWS X-RAY
+    - name: AWS_XRAY_DAEMON_ADDRESS
+      value: udp:xray-service.default:2000 tcp:xray-service.default:2000 
+
+    - name: AWS_XRAY_CONTEXT_MISSING
+      value: LOG_ERROR
+
+    - name: XRAY_ENABLED
+      value: "True"
+
+    - name: XRAY_INSPECT_QUERY
+      value: "False"
+
+    - name: AWS_XRAY_SDK_ENABLED
+      value: "True"
+
+    # Environment
+    - name: FLASK_ENV
+      value: production
+
+    # Entry point
+    - name: FLASK_APP
+      value: main.py
+
+    # Flask port, default port is 5000
+    - name: FLASK_RUN_PORT
+      value: "8000"
+
+    # Logging level
+    - name: LOG_LEVEL
+      value: INFO
+
+    - name: JWT_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: api-template-credentials
+          key: jwt_secret_key
+
+    - name: DATABASE_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: api-template-credentials
+          key: database_password
+      
+    - name: DATABASE_URI
+      valueFrom:
+        configMapKeyRef:
+          name: api-template-configmap
+          key: database_uri
+
+    - name: SQLALCHEMY_POOL_RECYCLE
+      value: "280"
+
+    - name: PRODUCER_TOPICS
+      value: "api-template-queue"
+
+    - name: PRODUCER_TYPE
+      value: "InMemoryProducer"
+
+    - name: TOPIC_CONSUMERS
+      value: "SampleConsumer:InMemoryConsumer"
+
+    - name: TOPIC_INTERVAL
+      value: "2"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
