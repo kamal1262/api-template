@@ -1,25 +1,25 @@
 steps:
-  # - label: "Running tests in development environment"
-  #   command: "auto/test"
-  #   env:
-  #     ENVIRONMENT: "DEV"
-  #   agents:
-  #     queue: 'eks-dataservices-agent-dev'
-  #   artifact_paths:
-  #     - "coverage.xml"
-  #     - "py-test-report.xml"
-  #     - "pylint-report.parseable"
+  - label: "Running tests in development environment"
+    command: "auto/test"
+    env:
+      ENVIRONMENT: "DEV"
+    agents:
+      queue: 'eks-dataservices-agent-dev'
+    artifact_paths:
+      - "coverage.xml"
+      - "py-test-report.xml"
+      - "pylint-report.parseable"
   
-  # - wait
+  - wait
 
-  # - label: "Sonar scan :sonarqube:"
-  #   agents:
-  #     queue: "eks-dataservices-agent-dev"
-  #   plugins:
-  #     ssh://git@git.realestate.com.au/cide/sonar-buildkite-plugin#7893f59e3cc5b62617ff30f85525902fd1e8024c:
-  #       projectKey: "api-template"
-  #       projectname: "API Template"
-  #       coverage_exclusions: "**/tests/**"
+  - label: "Sonar scan :sonarqube:"
+    agents:
+      queue: "eks-dataservices-agent-dev"
+    plugins:
+      ssh://git@git.realestate.com.au/data-service-it/sonar-buildkite-plugin#3bc7522639db9a956bf5243e66fe6a0b55edd3f5:
+        projectKey: "api-template"
+        projectname: "API Template"
+        coverage_exclusions: "**/tests/**"
 
   # - wait
 
